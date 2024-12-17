@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>OLED Control</title>
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+	<nav>
+		<h1>OLED Control Panel</h1>
+	</nav>
+
+	<div class="container">
+		<div class="item">
+			<h2>Text</h2>
+			<form action="" method="post">
+				<input type="hidden" name="type" value="Text">
+				<label for="text_input">Enter the text to display here:</label>
+				<textarea id="text_input" name="text_input" placeholder="Example text" rows="4" cols="24"></textarea>
+				<label for="text-screen">Pick the screen to display on here:</label>
+				<select id="text-screen" name="screen">
+					<option value="1">One</option>
+					<option value="2">Two</option>
+					<option value="3">Three</option>
+					<option value="4">Four</option>
+				</select>
+				<button type="button" class="btn collapsible">More Options</button>
+				<div class="collapsible-content">
+					<input type="checkbox" id="display_console" name="display_console" value="True">
+					<label for="display_console">Display text without markup.</label>
+				</div>
+				<button class="btn">Submit</button>
+			</form>
+		</div>
+		<div class="item">
+			<h2>Timer</h2>
+			<form action="" method="post">
+				<input type="hidden" name="type" value="Timer">
+				<button type="button" class="btn collapsible">Edit Timer</button>
+				<div class="collapsible-content">
+					<label for="timer-screen">Pick the screen to display on here:</label>
+					<select id="timer-screen" name="screen">
+						<option value="1">One</option>
+						<option value="2">Two</option>
+						<option value="3">Three</option>
+						<option value="4">Four</option>
+					</select>
+					<button class="btn" name="timer_val" value="start">Start Timer</button>
+					<button class="btn" name="timer_val" value="pause">Pause Timer</button>
+					<button class="btn" name="timer_val" value="reset">Reset Timer</button>
+				</div>
+			</form>
+		</div>
+		<div class="item">
+			<h2>Label</h2>
+			<p>content here</p>
+		</div>
+		<div class="item">
+			<h2>Label</h2>
+			<p>content here</p>
+		</div>
+		<div class="item">
+			<h2>Label</h2>
+			<p>content here</p>
+		</div>
+	</div>
+	<script src="./js/script.js"></script>
+</body>
+</html>

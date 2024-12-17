@@ -1,0 +1,106 @@
+html, body  {
+	font-family: Arial, Helvetica, sans-serif;
+	background: slategray;
+	color: whitesmoke;
+	margin: 0px;
+}
+
+nav {
+	background: midnightblue;
+	padding: 0px;
+	margin-bottom: 30px;
+}
+nav h1 {
+	text-align: center;
+	margin: 0px;
+	padding: 20px 0px;
+}
+
+.container {
+	margin: 0 10%;
+	padding: 10px;
+	background: darkslategray;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: stretch;
+	border-radius: 15px;
+	color: black;
+}
+
+.item {
+	margin: 10px;
+	padding: 10px;
+	background: #f1f1f1;
+	border-radius: 10px;
+	min-width: 180px;
+}
+
+.item h2 {
+	border-bottom: medium solid black;
+	padding-left: 5px;
+}
+
+.item textarea, .item select {
+    display: block;
+    margin: 10px 0px;
+    padding: 5px;
+    min-width: 150px;
+}
+
+.item input[type="checkbox"] {
+    margin: 0px 10px;
+    display: inline;
+    min-width: 0px;
+}
+
+.btn {
+    background-color: steelblue;
+	padding: 10px;
+	border-radius: 8px;
+	margin: 10px 0px;
+	display: block;
+	color: whitesmoke;
+	min-width: 150px;
+	border: 0;
+}
+
+.btn:hover {
+	background-color: slategray;
+}
+
+.btn:active {
+	background-color: cadetblue;
+}
+
+.collapsible {
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.collapsible.active, .collapsible:hover, .collapsible:active {
+	background-color: slategray;
+}
+
+.collapsible:after {
+    content: '\002B';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "\2212";
+}
+
+.collapsible-content {
+    text-align: start;
+    padding: 0 10px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
