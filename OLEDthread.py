@@ -1,7 +1,7 @@
 from time import sleep
 from threading import Event
 
-# from smbus2 import SMBus
+from smbus2 import SMBus
 from luma.core.interface.serial import i2c
 from luma.oled.device import ssd1306
 
@@ -10,7 +10,7 @@ from OLED import OLED
 
 class OLEDthread:
     start_port = 2
-    oleds = []
+    threads = []
 
     def __init__(self, id, address, screen):
         self.id = id
@@ -20,10 +20,10 @@ class OLEDthread:
         print(bin(self.port))
 
         # Increase array to ensure right size
-        while len(OLEDthread.oleds) < screen:
-            OLEDthread.oleds.append(None)
+        while len(OLEDthread.threads) < screen:
+            OLEDthread.threads.append(None)
 
-        OLEDthread.oleds[screen - 1] = self
+        OLEDthread.threads[screen - 1] = self
 
         self.bus = SMBus(1)
         self.bus.write_byte(self.address, self.port)
@@ -60,32 +60,32 @@ class OLEDthread:
     @staticmethod
     def update_delay(screen, delay):
         try:
-            OLEDthread.oleds[screen - 1]._set_delay(delay)
+            OLEDthread.threads[screen - 1]._set_delay(delay)
         except IndexError:
             pass
 
     @staticmethod
     def change_screen(screen, function, *args, **kwargs):
         try:
-            old = OLEDthread.oleds[screen - 1]
+            old = OLEDthread.threads[screen - 1]
             old.oled = function(old.device, *args, **kwargs)
         except IndexError:
             print("Can't change")
-            pass
 
     @classmethod
     def get_oled(cls, screen):
         try:
-            return OLEDthread.oleds[screen - 1].oled
+            return OLEDthread.threads[screen - 1].oled
         except IndexError:
             return None
 
     @classmethod
     def create_threads(cls, num, starting_port, address):
         cls.start_port = starting_port
-        cls.oleds.clear()
+        cls.threads.clear()
         for oled in range(1, num + 1):
-            cls.oleds.append(cls(oled, address, oled))
+            cls.threads.append(cls(oled, address, oled))
+
 
 
 

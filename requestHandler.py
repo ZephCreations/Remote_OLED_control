@@ -6,6 +6,7 @@ from urllib.parse import parse_qsl, urlparse
 
 from OLEDthread import OLEDthread
 from OLEDtext import OLEDtext
+from OLEDtimer import OLEDtimer
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
@@ -75,11 +76,22 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         print(name)
         if name == "Timer":
             value = self.form_data.get('timer_val')
+            screen = int(self.form_data.get("screen"))
             if value == "start":
+                OLEDthread.change_screen(screen, OLEDtimer)
+                speed = int(self.form_data.get("timer_update_speed"))
+                if speed is not None:
+                    OLEDthread.update_delay(screen, speed)
                 print("Start timer")
             elif value == "pause":
+                oled = OLEDthread.get_oled(screen)
+                if type(oled) is OLEDtimer:
+                    oled.pause()
                 print("Pause timer")
             elif value == "reset":
+                oled = OLEDthread.get_oled(screen)
+                if type(oled) is OLEDtimer:
+                    oled.reset()
                 print("Restart timer")
             else:
                 print("Value not found")
@@ -91,6 +103,6 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             console = False
             if self.form_data.get("display_console"):
                 console = True
-            # OLEDthread.change_screen(screen, OLEDtext, text, console)
+            OLEDthread.change_screen(screen, OLEDtext, text, console)
             print(text)
 

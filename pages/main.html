@@ -24,6 +24,8 @@
 					<option value="2">Two</option>
 					<option value="3">Three</option>
 					<option value="4">Four</option>
+					<option value="5">Five</option>
+					<option value="6">Six</option>
 				</select>
 				<button type="button" class="btn collapsible">More Options</button>
 				<div class="collapsible-content">
@@ -37,18 +39,24 @@
 			<h2>Timer</h2>
 			<form action="" method="post">
 				<input type="hidden" name="type" value="Timer">
-				<button type="button" class="btn collapsible">Edit Timer</button>
-				<div class="collapsible-content">
 					<label for="timer-screen">Pick the screen to display on here:</label>
 					<select id="timer-screen" name="screen">
 						<option value="1">One</option>
 						<option value="2">Two</option>
 						<option value="3">Three</option>
 						<option value="4">Four</option>
+						<option value="5">Five</option>
+						<option value="6">Six</option>
 					</select>
-					<button class="btn" name="timer_val" value="start">Start Timer</button>
-					<button class="btn" name="timer_val" value="pause">Pause Timer</button>
-					<button class="btn" name="timer_val" value="reset">Reset Timer</button>
+					<button class="btn inline" name="timer_val" value="start">Start Timer</button>
+					<button class="btn inline" name="timer_val" value="pause">Pause/Play Timer</button>
+					<button class="btn inline" name="timer_val" value="reset">Reset Timer</button>
+				<button type="button" class="btn collapsible">More Options</button>
+				<div class="collapsible-content">
+					<label for="timer_name">Custom Name:</label>
+					<input type="text" id="timer_name" name="timer_name" placeholder="Timer">
+					<label for="timer_update_speed">Interval at which the timer updates (in seconds):</label>
+					<input type="text" id="timer_update_speed" name="timer_update_speed" value="1">
 				</div>
 			</form>
 		</div>
