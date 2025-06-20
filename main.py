@@ -27,41 +27,34 @@ def setup_oleds():
     OLEDthread.update_delay(4, 1)
 
 
-if __name__ == "__main__":
-    address = 0x70
+def setup_threads(num, starting_port, address):
     # channel      76543210
     # channel2 = 0b00000100  # channel 2
+    OLEDthread.create_threads(num, starting_port, address)
 
-    OLEDthread.create_threads(6, 2, address)
+
+if __name__ == "__main__":
+    # Initialise OLEDs
+    multiplexer_address = 0x70
+    num_screens = 6
+    setup_threads(num_screens, 2, multiplexer_address)
     setup_oleds()
-
-    text = "Zeph is the best"
-    text_split = text.split()
-    text2 = "Lola is also cool"
-    text2_splot = text2.split()
 
     stop_event = threading.Event()
     oled_port_lock = threading.Lock()
 
+    # Start Webserver
     server = ThreadingHTTPServer(("0.0.0.0", 8000), WebRequestHandler)
 
+    # Keep threads going
     with concurrent.futures.ThreadPoolExecutor(max_workers=7) as executor:
         executor.submit(server.serve_forever)
 
         for oled_thread in OLEDthread.threads:
             executor.submit(oled_thread.update, oled_port_lock, stop_event)
-#         for i in range(0, len(text_split)):
-#             OLEDthread.get_oled(1).update_text(text_split[i])
-#             OLEDthread.get_oled(2).update_text(text2_splot[i])
-#             time.sleep(1)
-#
-#         time.sleep(1)
 
-        OLEDthread.update_delay(1, 1)
-        OLEDthread.update_delay(2, 1)
-        OLEDthread.update_delay(3, 1)
-        OLEDthread.update_delay(4, 1)
-        OLEDthread.update_delay(5, 1)
-        OLEDthread.update_delay(6, 1)
+        # Set delay and start looping
+        for screen_number in range(1, num_screens+1):
+            OLEDthread.update_delay(screen_number, 1)
 
 
