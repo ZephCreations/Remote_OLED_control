@@ -1,5 +1,3 @@
-from click import wrap_text
-
 from OLED import OLED
 
 from luma.core.render import canvas
@@ -12,7 +10,7 @@ class OLEDtext(OLED):
 
     def __init__(self, device, text="", display_console=False):
         OLED.__init__(self, device)
-        self.text = wrap_text(text)
+        self.text = self.wrap_text(text)
         self.display_console = display_console
 
 
