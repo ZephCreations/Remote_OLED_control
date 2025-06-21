@@ -8,18 +8,19 @@ class OLEDtext(OLED):
 
     def __init__(self, device, text="", display_console=False):
         OLED.__init__(self, device)
-        self.text = text
-        self.display_console = display_console
 
-    def update_text(self, text):
+        # Setup text
         self.text = text
         self._add_line_breaks()
+
+        # Other variables
+        self.display_console = display_console
 
     def _add_line_breaks(self, every=20):
         lines = []
         for i in range(0, len(self.text), every):
             lines.append(self.text[i:i + every])
-        return '\n'.join(lines)
+        self.text = '\n'.join(lines)
 
     def update(self):
         if self.display_console:
