@@ -13,18 +13,18 @@ from OLEDtimer import OLEDtimer
 
 
 def setup_oleds():
+    # TODO: Reset to previous values
     OLEDthread.change_screen(1, OLEDtext)
     OLEDthread.update_delay(1, 0.5)
 
     OLEDthread.change_screen(2, OLEDtext)
     OLEDthread.update_delay(2, 0.5)
 
-    OLEDthread.change_screen(3, OLEDimage)
-    OLEDthread.update_delay(3, 10)
-    OLEDthread.get_oled(3).update_image("files/Axalotl.jpg")
+    OLEDthread.change_screen(3, OLEDtext)
+    OLEDthread.update_delay(3, 0.5)
 
-    OLEDthread.change_screen(4, OLEDtimer)
-    OLEDthread.update_delay(4, 1)
+    OLEDthread.change_screen(4, OLEDtext)
+    OLEDthread.update_delay(4, 0.5)
 
 
 def setup_threads(num, starting_port, address):
