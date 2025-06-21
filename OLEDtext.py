@@ -13,6 +13,13 @@ class OLEDtext(OLED):
 
     def update_text(self, text):
         self.text = text
+        self._add_line_breaks()
+
+    def _add_line_breaks(self, every=20):
+        lines = []
+        for i in range(0, len(self.text), every):
+            lines.append(self.text[i:i + every])
+        return '\n'.join(lines)
 
     def update(self):
         if self.display_console:
