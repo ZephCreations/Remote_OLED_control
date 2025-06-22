@@ -1,15 +1,11 @@
 import concurrent.futures
 import threading
-import time
 
-from requestHandler import WebRequestHandler
+from Website.requestHandler import WebRequestHandler
 from http.server import ThreadingHTTPServer
 
-from OLEDthread import OLEDthread
-from OLED import OLED
-from OLEDtext import OLEDtext
-from OLEDimage import OLEDimage
-from OLEDtimer import OLEDtimer
+from src.OLED.OLEDthread import OLEDthread
+from src.OLED.OLEDtext import OLEDtext
 
 
 def setup_oleds():

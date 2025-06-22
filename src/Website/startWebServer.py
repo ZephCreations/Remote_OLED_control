@@ -1,4 +1,4 @@
-from requestHandler import WebRequestHandler
+from Website.requestHandler import WebRequestHandler
 from http.server import ThreadingHTTPServer
 
 
