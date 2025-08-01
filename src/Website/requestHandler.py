@@ -4,9 +4,9 @@ from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import parse_qsl, urlparse
 
-from src.OLED.OLEDthread import OLEDthread
-from src.OLED.OLEDtext import OLEDtext
-from src.OLED.OLEDtimer import OLEDtimer
+from OLED.OLEDthread import OLEDthread
+from OLED.OLEDtext import OLEDtext
+from OLED.OLEDtimer import OLEDtimer
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
