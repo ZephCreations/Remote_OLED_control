@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # Activate venv
     run_cmd(sshProcess, "source venv/bin/activate")
     # Start file
-    run_cmd(sshProcess, "python src/main.py")
+    run_cmd(sshProcess, "python -m src.main")
     # Deactivate venv
     run_cmd(sshProcess, "deactivate")
 
