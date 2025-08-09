@@ -1,2 +1,2 @@
-from requestHandler import WebRequestHandler
+from .requestHandler import WebRequestHandler
 

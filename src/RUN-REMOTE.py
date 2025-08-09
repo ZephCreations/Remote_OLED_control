@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # Deactivate venv
     run_cmd(sshProcess, "deactivate")
 
-    run_cmd(sshProcess, "logout")
+    run_cmd(sshProcess, "exit")
     print_output(sshProcess)
 
 
