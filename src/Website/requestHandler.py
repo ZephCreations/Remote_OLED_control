@@ -4,9 +4,8 @@ from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import parse_qsl, urlparse
 
-from OLED.OLEDthread import OLEDthread
-from OLED.OLEDtext import OLEDtext
-from OLED.OLEDtimer import OLEDtimer
+from src.utils import get_project_root
+from src.OLED import OLEDthread, OLEDtext, OLEDtimer
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
@@ -33,7 +32,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/':
-            self.path = '../../assets/pages/main.html'
+            # Get html file
+            self.path = get_project_root().joinpath('/assets/pages/main.html').as_uri()
         try:
             file = open(self.path[1:]).read()
             self.send_response(200)

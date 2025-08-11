@@ -30,8 +30,6 @@ if __name__ == "__main__":
 
     # Activate venv
     run_cmd(sshProcess, "source venv/bin/activate")
-    # Mark directory
-    run_cmd(sshProcess, "export PYTHONPATH='${PYTHONPATH}:/src'")
     # Start file
     run_cmd(sshProcess, "python src/main.py")
     # Deactivate venv
