@@ -9,7 +9,7 @@ from utils import get_project_root
 from OLED import OLEDthread, OLEDtext, OLEDtimer
 
 
-ASSETS_DIR = get_project_root() / 'Assets'
+ASSETS_DIR = get_project_root() / 'assets'
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
