@@ -33,9 +33,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             # Get html file
-            self.path = get_project_root().joinpath('/assets/pages/main.html').as_uri()
+            self.path = (get_project_root() / 'assets/pages/main.html').as_posix()
+            print(self.path)
         try:
-            file = open(self.path[1:]).read()
+            file = open(self.path).read()
             self.send_response(200)
         except:
             file = "File not found"
