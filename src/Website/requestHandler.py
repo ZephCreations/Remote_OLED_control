@@ -82,6 +82,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             with open(path.as_posix(), "rb") as file:
                 self.wfile.write(file.read())
+        else:
+            self.send_error(404, "File not found")
 
     def get_response(self):
         return json.dumps(
