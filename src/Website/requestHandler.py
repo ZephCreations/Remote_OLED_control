@@ -39,8 +39,6 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             # Get html file
             file_path = ASSETS_DIR / 'pages' / 'main.html'
             self.send_file(file_path, "text/html")
-            print(file_path.as_posix())
-            print(file_path.name)
 
         # Handle static files
         elif self.path.endswith('.css'):
