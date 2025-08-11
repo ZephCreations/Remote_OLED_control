@@ -40,13 +40,14 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             file_path = ASSETS_DIR / 'pages' / 'main.html'
             self.send_file(file_path, "text/html")
             print(file_path.as_posix())
+            print(file_path.name)
 
         # Handle static files
         elif self.path.endswith('.css'):
-            file_path = ASSETS_DIR / 'css'
+            file_path = ASSETS_DIR / 'css' / Path(self.path).name
             self.send_file(file_path, "text/css")
         elif self.path.endswith('.js'):
-            file_path = ASSETS_DIR / 'js'
+            file_path = ASSETS_DIR / 'js' / Path(self.path).name
             self.send_file(file_path, "application/javascript")
 
         # No correct files/paths
