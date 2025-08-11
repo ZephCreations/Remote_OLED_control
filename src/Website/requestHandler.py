@@ -3,9 +3,13 @@ from functools import cached_property
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import parse_qsl, urlparse
+from pathlib import Path
 
 from utils import get_project_root
 from OLED import OLEDthread, OLEDtext, OLEDtimer
+
+
+ASSETS_DIR = get_project_root() / 'Assets'
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
@@ -33,19 +37,32 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             # Get html file
-            self.path = (get_project_root() / 'assets/pages/main.html').as_posix()
-            print(self.path)
-        try:
-            file = open(self.path).read()
-            self.send_response(200)
-        except:
-            file = "File not found"
-            self.send_response(404)
+            file_path = ASSETS_DIR / 'pages' / 'main.html'
+            self.send_file(file_path, "text/html")
+
+        # Handle static files
+        elif self.path.endswith('.css'):
+            file_path = ASSETS_DIR / 'css'
+            self.send_file(file_path, "text/css")
+        elif self.path.endswith('.js'):
+            file_path = ASSETS_DIR / 'js'
+            self.send_file(file_path, "application/javascript")
+
+        # No correct files/paths
+        else:
+            self.send_error(404, "File not found")
+        #
+        # try:
+        #     file = open(self.path).read()
+        #     self.send_response(200)
+        # except:
+        #     file = "File not found"
+        #     self.send_response(404)
 
         # self.send_response(200)
         # self.send_header("Content-Type", "application/json")
-        self.end_headers()
-        self.wfile.write(bytes(file, 'utf-8'))
+        # self.end_headers()
+        # self.wfile.write(bytes(file, 'utf-8'))
         # self.wfile.write(self.get_response().encode("utf-8"))
 
     def do_POST(self):
@@ -57,6 +74,14 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         # self.end_headers()
         # self.wfile.write(self.get_response().encode("utf-8"))
         self.do_GET()
+
+    def send_file(self, path: Path, content_type):
+        if path.is_file():
+            self.send_response(200)
+            self.send_header("Content-type", content_type)
+            self.end_headers()
+            with open(path.as_posix(), "rb") as file:
+                self.wfile.write(file.read())
 
     def get_response(self):
         return json.dumps(
