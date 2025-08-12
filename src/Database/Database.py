@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 
+from DatabaseExceptions import UniqueConstraintFailedException
+
 
 class Database:
     _instance = None
@@ -34,21 +36,21 @@ class Database:
     def get_connection(self):
         return self.__class__._connection
 
-    def execute_query(self, query):
+    def execute_query(self, query, *params):
         cursor = self._connection.cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(query, params)
             self.last_id = cursor.lastrowid
             self._connection.commit()
             print("Query executed successfully")
         except Error as e:
             print(f"The error '{e}' occurred")
 
-    def execute_read_query(self, query):
+    def execute_read_query(self, query, *params):
         cursor = self._connection.cursor()
         result = None
         try:
-            cursor.execute(query)
+            cursor.execute(query, params)
             result = cursor.fetchall()
             return result
         except Error as e:
