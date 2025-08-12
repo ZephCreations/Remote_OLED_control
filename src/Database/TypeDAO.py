@@ -30,8 +30,8 @@ class TypeDAO:
         disp_type.id = self.__connection.get_last_id()
 
     def remove_type(self, disp_type: DispType):
-        # TODO: Add removal functionality for display_type
-        pass
+        query = "DELETE FROM type_table WHERE Type_ID = ?"
+        self.__connection.execute_query(query, disp_type.id)
 
     def get_type(self, disp_type: DispType):
         query = f"SELECT * FROM type_table WHERE Type_ID = ?"
@@ -45,10 +45,13 @@ if __name__ == "__main__":
     typeDAO = TypeDAO()
 
     # Test getting single value
-    type_enum = DispTypeList.TEXT
+    type_enum = DispTypeList.SELECTION
     sample_disp_type = DispType(type_enum.name)
     sample_disp_type.id = type_enum.value
 
     print(typeDAO.get_type(sample_disp_type))
     print(typeDAO.get_all())
+    print(typeDAO.remove_type(sample_disp_type))
+    print(typeDAO.get_all())
+
 
