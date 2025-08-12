@@ -28,7 +28,7 @@ class Database:
 
 
     def __init__(self):
-        pass
+        self.last_id = self._connection.cursor().lastrowid
 
 
     def get_connection(self):
@@ -38,6 +38,7 @@ class Database:
         cursor = self._connection.cursor()
         try:
             cursor.execute(query)
+            self.last_id = cursor.lastrowid
             self._connection.commit()
             print("Query executed successfully")
         except Error as e:
@@ -52,6 +53,13 @@ class Database:
             return result
         except Error as e:
             print(f"The error '{e}' occurred")
+
+    def get_last_id(self):
+        return self.last_id
+
+    def __del__(self):
+        # On object deletion, release database
+        self._connection.close()
 
 
 if __name__ == "__main__":
