@@ -1,5 +1,6 @@
 from Database import Database
 from DispType import DispType, DispTypeList
+from DatabaseExceptions import UniqueConstraintFailedException
 
 class TypeDAO:
 
@@ -11,8 +12,10 @@ class TypeDAO:
     def _add_static_values(self):
         # Loop through Enum
         for disp_type in list(DispTypeList):
-            # TODO: Handle UNIQUE constraint fail
-            self.add_type(DispType(disp_type.name))
+            try:
+                self.add_type(DispType(disp_type.name))
+            except UniqueConstraintFailedException:
+                pass
 
 
     def _make_table(self):

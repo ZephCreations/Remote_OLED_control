@@ -44,7 +44,11 @@ class Database:
             self._connection.commit()
             print("Query executed successfully")
         except Error as e:
-            print(f"The error '{e}' occurred")
+            if e.sqlite_errorcode == sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+                # Unique constraint failed
+                raise UniqueConstraintFailedException(query, params)
+            else:
+                print(f"The error '{e}' occurred")
 
     def execute_read_query(self, query, *params):
         cursor = self._connection.cursor()
