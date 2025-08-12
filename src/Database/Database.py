@@ -11,7 +11,7 @@ class Database:
             cls._instance = super(Database, cls).__new__(cls)
             # Create database connection
             cls._connection = cls._create_connection()
-            print("=============Created")
+            print("=============Created=============")
         return cls._instance
 
 
@@ -34,14 +34,22 @@ class Database:
     def get_connection(self):
         return self.__class__._connection
 
-
-    @staticmethod
-    def execute_query(connection, query):
-        cursor = connection.cursor()
+    def execute_query(self, query):
+        cursor = self._connection.cursor()
         try:
             cursor.execute(query)
-            connection.commit()
+            self._connection.commit()
             print("Query executed successfully")
+        except Error as e:
+            print(f"The error '{e}' occurred")
+
+    def execute_read_query(self, query):
+        cursor = self._connection.cursor()
+        result = None
+        try:
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return result
         except Error as e:
             print(f"The error '{e}' occurred")
 
