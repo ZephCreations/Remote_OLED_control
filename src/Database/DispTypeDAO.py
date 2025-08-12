@@ -2,7 +2,7 @@ from Database import Database
 from DispType import DispType, DispTypeList
 from DatabaseExceptions import UniqueConstraintFailedException
 
-class TypeDAO:
+class DispTypeDAO:
 
     def __init__(self):
         self.__connection = Database()
@@ -42,7 +42,7 @@ class TypeDAO:
         return self.__connection.execute_read_query(query)
 
 if __name__ == "__main__":
-    typeDAO = TypeDAO()
+    typeDAO = DispTypeDAO()
 
     # Test getting single value
     type_enum = DispTypeList.SELECTION
