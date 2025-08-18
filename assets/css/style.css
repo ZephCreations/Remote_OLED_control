@@ -16,6 +16,14 @@ nav h1 {
 	padding: 20px 0px;
 }
 
+.centre {
+    margin: auto;
+}
+
+.text-centre {
+    text-align: center;
+}
+
 .container {
 	margin: 0 10%;
 	padding: 10px;
@@ -27,6 +35,39 @@ nav h1 {
 	align-content: stretch;
 	border-radius: 15px;
 	color: black;
+}
+
+.label {
+    margin: 0 10%;
+	padding: 0px 10px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: stretch;
+	border-radius: 15px;
+}
+
+.screen-display {
+    margin: 10px;
+	padding: 10px 10px;
+	background: #f1f1f1;
+	border-radius: 3px;
+	min-width: 180px;
+}
+
+.screen-display h2 {
+    margin: 0px 0px 5px 0;
+}
+
+.screen {
+    background: black;
+    color: whitesmoke;
+    text-align: left;
+    width: 128px;
+    height: 64px;
+    padding: 0px;
+    margin: auto;
 }
 
 .item {
