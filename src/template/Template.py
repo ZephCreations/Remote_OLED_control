@@ -1,5 +1,5 @@
 import re
-from Node import TextNode, VariableNode, IfNode, EndIfNode, ForNode, EndForNode
+from .Node import TextNode, VariableNode, IfNode, ForNode
 
 class Template:
     def __init__(self, template_str):
@@ -9,79 +9,104 @@ class Template:
 
     def _tokenize(self):
         """
-        Splits text into raw text, variables {{ var }}, and tags {% tag %}
+        Splits text into raw text, variables {{ var }}, and tags {% tag %}.
+        Removes surrounding line breaks for control tags that appear alone on a line.
         """
+        # Remove lines that only contain a control tag (like {% for ... %})
+        cleaned = re.sub(
+            r'^[ \t]*({%.*?%})[ \t]*\r?\n?',
+            r'\1',
+            self.template_str,
+            flags=re.MULTILINE
+        )
+
         token_re = re.compile(r"({{.*?}}|{%.*?%})")
-        parts = token_re.split(self.template_str)
+        parts = token_re.split(cleaned)
         return [p for p in parts if p]
 
     def _parse(self):
         """
         Converts tokens into node objects.
         """
-        nodes = []
+        root = []
+        stack = [root]
+        if_stack = [] # To keep track of which IfNode we're inside
+
         for token in self._tokens:
             if token.startswith("{{") and token.endswith("}}"):
                 # Variable
                 # Remove {{ }} brackets
                 expr = token[2:-2].strip()
-
                 # Add variable node
-                nodes.append(VariableNode(expr))
+                stack[-1].append(VariableNode(expr))
             elif token.startswith("{%") and token.endswith("%}"):
                 # Tag
-                # Remove {{ }} brackets
+                # Remove {% %} brackets
                 tag = token[2:-2].strip()
 
                 # Switch case on type
                 if tag.startswith("if "):
-                    nodes.append(IfNode(tag[3:].strip()))
+                    node = IfNode(tag[3:].strip())
+                    stack[-1].append(node)
+                    if_stack.append(node)
+                    stack.append(node.branches[0][1])
+                elif tag.startswith("elif "):
+                    if not if_stack:
+                        raise SyntaxError("{% else %} without matching {% if %}")
+                    current_if = if_stack[-1]
+                    new_branch = current_if.add_elif(tag[5:].strip())
+                    stack.pop()
+                    stack.append(new_branch)
+                elif tag == "else":
+                    if not if_stack:
+                        raise SyntaxError("{% else %} without matching {% if %}")
+                    current_if = if_stack[-1]
+                    new_branch = current_if.add_else()
+                    stack.pop()
+                    stack.append(new_branch)
+
                 elif tag == "endif":
-                    nodes.append(EndIfNode())
+                    if not if_stack:
+                        raise SyntaxError("{% endif %} without matching {% if %}")
+                    if_stack.pop()
+                    stack.pop()
+
                 elif tag.startswith("for "):
-                    # TODO Add loops
-                    pass
+                    # Parse "for x in items"
+                    _, var_name, _, iterable = tag.split()
+                    node = ForNode(var_name, iterable)
+                    stack[-1].append(node)
+                    stack.append(node.children)
+
+                elif tag == "endfor":
+                    stack.pop()
             else:
                 # Regular text
-                nodes.append(TextNode(token))
-        return nodes
+                stack[-1].append(TextNode(token))
+
+        return root
 
     def render(self, context):
-        """
-        Walk nodes and render into a string.
-        """
-        output = []
-
-        # Check to see whether to skip over a block of code or not
-        skip = False
-        loop = False
-        for node in self._nodes:
-            # Check node type
-            if isinstance(node, IfNode):
-                # Skip over block if context variable with the name of node.var is FALSE
-                # Defaults to FALSE if no context var is provided
-                skip = not context.get(node.var, False)
-            elif isinstance(node, EndIfNode):
-                # Stop skipping content (nodes) when endif is reached.
-                skip = False
-            elif isinstance(node, ForNode):
-                pass
-            elif isinstance(node, EndForNode):
-                pass
-                loop = False
-            elif not skip:
-                # Insert node content (variable or text) if it is not being skipped.
-                output.append(node.render(context))
-        # End of for loop
-
-        return "".join(output)
+        return "".join(node.render(context) for node in self._nodes)
 
 
 
 
-# --- Example usage ---
-tpl = Template("Hello {{ name }}! {% if admin %}You are an admin.{% endif %}")
-print(tpl._nodes)
-print(tpl.render({"name": "Sample", "admin": True}))
-
-print(tpl.render({"name": "Sample", "admin": False}))
+# # --- Example usage ---
+# tpl = Template("""
+# Hello {{ name }}!
+# {% if admin %}
+# You are an admin.
+# {% endif %}
+#
+# Your items:
+# {% for x in items %}
+#  - {{ x }}
+# {% endfor %}
+# """)
+#
+# print(tpl.render({
+#     "name": "Sample",
+#     "admin": True,
+#     "items": ["apple", "banana", "cherry"]
+# }))

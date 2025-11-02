@@ -15,24 +15,14 @@
 		<h1>Screens</h1>
 	</div>
 	<div class="container">
+		{% for screen in screens %}
 		<div class="screen-display text-centre">
-			<h2>Screen 1</h2>
+			<h2>Screen {{ forloop.counter }}</h2>
 			<div class="screen">
-				<samp>Lecture wk 3</samp>
+				<samp>{{ screen }}</samp>
 			</div>
 		</div>
-		<div class="screen-display text-centre">
-			<h2>Screen 2</h2>
-			<div class="screen">
-
-			</div>
-		</div>
-		<div class="screen-display text-centre">
-			<h2>Screen 3</h2>
-			<div class="screen">
-
-			</div>
-		</div>
+		{% endfor %}
 	</div>
 	<br>
 	<div class="container">
