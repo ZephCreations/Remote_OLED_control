@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 
-from DatabaseExceptions import UniqueConstraintFailedException
+from .DatabaseExceptions import UniqueConstraintFailedException
 
 
 class Database:

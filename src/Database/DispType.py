@@ -11,7 +11,7 @@ class DispTypeList(Enum):
 
 class DispType:
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.id = 0
         self.name = name
 

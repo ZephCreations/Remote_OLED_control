@@ -1,6 +1,4 @@
-from Database import Database
-from DispType import DispType, DispTypeList
-from DatabaseExceptions import UniqueConstraintFailedException
+from Database import Database, DispType, DispTypeList, UniqueConstraintFailedException
 
 class DispTypeDAO:
 
@@ -36,6 +34,10 @@ class DispTypeDAO:
     def get_type(self, disp_type: DispType):
         query = f"SELECT * FROM type_table WHERE Type_ID = ?"
         return self.__connection.execute_read_query(query, disp_type.id)
+
+    def get_type_by_value(self, name: str):
+        query = f"SELECT * FROM type_table WHERE Name = ?"
+        return self.__connection.execute_read_query(query, name)
 
     def get_all(self):
         query = f"SELECT * FROM type_table"

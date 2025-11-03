@@ -1,5 +1,4 @@
-from Database import Database
-from Screen import Screen
+from Database import Database, Screen
 
 
 class ScreenDAO:
@@ -26,6 +25,10 @@ class ScreenDAO:
     def get_screen(self, screen: Screen):
         query = f"SELECT * FROM screen_table WHERE Screen_ID = ?"
         return self.__connection.execute_read_query(query, screen.id)
+
+    def get_screen_by_value(self, address: int):
+        query = f"SELECT * FROM screen_table WHERE Address = ?"
+        return self.__connection.execute_read_query(query, address)
 
     def get_all(self):
         query = f"SELECT * FROM screen_table"

@@ -1,5 +1,4 @@
-from Database import Database
-from Profile import Profile
+from Database import Database, Profile
 
 
 class ProfileDAO:
@@ -26,6 +25,10 @@ class ProfileDAO:
     def get_profile(self, profile: Profile):
         query = f"SELECT * FROM profile_table WHERE Profile_ID = ?"
         return self.__connection.execute_read_query(query, profile.id)
+
+    def get_profile_by_value(self, name: str):
+        query = f"SELECT * FROM profile_table WHERE Name = ?"
+        return self.__connection.execute_read_query(query, name)
 
     def get_all(self):
         query = f"SELECT * FROM profile_table"

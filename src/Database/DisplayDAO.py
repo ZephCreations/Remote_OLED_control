@@ -1,5 +1,4 @@
-from Database import Database
-from Display import Display
+from Database import Database, Display
 
 class DisplayDAO:
 
@@ -26,15 +25,22 @@ class DisplayDAO:
         display.id = self.__connection.get_last_id()
 
     def remove_display(self, display: Display):
-        query = "DELETE FROM display_table WHERE Display_ID = ?"
+        query = "DELETE FROM display_table WHERE Display_ID = ?;"
         self.__connection.execute_query(query, display.id)
 
     def get_display(self, display: Display):
-        query = f"SELECT * FROM display_table WHERE Display_ID = ?"
+        query = f"SELECT * FROM display_table WHERE Display_ID = ?;"
         return self.__connection.execute_read_query(query, display.id)
 
+    def get_display_by_value(self, profile_id: int, screen_id: int, type_id: int):
+        query = (
+            "SELECT * FROM display_table "
+            "WHERE Profile_ID = ? AND Screen_ID = ? AND Type_ID = ?;"
+        )
+        return self.__connection.execute_read_query(query, profile_id, screen_id, type_id)
+
     def get_all(self):
-        query = f"SELECT * FROM display_table"
+        query = f"SELECT * FROM display_table;"
         return self.__connection.execute_read_query(query)
 
 
