@@ -26,22 +26,48 @@ class DispTypeDAO:
         query = "INSERT INTO type_table (Name) VALUES (?);"
         self.__connection.execute_query(query, disp_type.name)
         disp_type.id = self.__connection.get_last_id()
+        return disp_type # return with updated id
+
+    def update_type(self, disp_type: DispType):
+        query = "UPDATE type_table SET Name = ? WHERE Type_ID = ?;"
+        cursor = self.__connection.execute_query(query, disp_type.name, disp_type.id)
+
+        # Check if anything was updated
+        if cursor and cursor.rowcount == 0:
+            print("[DispTypeDAO] Warning: No matching display_type found to update.")
+
+        # Return the updated version from DB
+        updated = self.get_type_by_value(disp_type.name)
+        return updated or disp_type
 
     def remove_type(self, disp_type: DispType):
-        query = "DELETE FROM type_table WHERE Type_ID = ?"
+        query = "DELETE FROM type_table WHERE Type_ID = ?;"
         self.__connection.execute_query(query, disp_type.id)
 
     def get_type(self, disp_type: DispType):
-        query = f"SELECT * FROM type_table WHERE Type_ID = ?"
-        return self.__connection.execute_read_query(query, disp_type.id)
+        query = f"SELECT * FROM type_table WHERE Type_ID = ?;"
+        rows = self.__connection.execute_read_query(query, disp_type.id)
+        return self._to_type(rows[0]) if rows else None
 
     def get_type_by_value(self, name: str):
-        query = f"SELECT * FROM type_table WHERE Name = ?"
-        return self.__connection.execute_read_query(query, name)
+        query = f"SELECT * FROM type_table WHERE Name = ?;"
+        rows = self.__connection.execute_read_query(query, name)
+        return self._to_type(rows[0]) if rows else None
 
     def get_all(self):
-        query = f"SELECT * FROM type_table"
-        return self.__connection.execute_read_query(query)
+        query = f"SELECT * FROM type_table;"
+        rows = self.__connection.execute_read_query(query)
+        return [self._to_type(row) for row in rows]
+
+    # ----------------------------------------------------
+    # Internal helper
+    # ----------------------------------------------------
+    @staticmethod
+    def _to_type(row):
+        disp_type = DispType(name = row[1]
+        )
+        disp_type.id = row[0]
+        return disp_type
 
 if __name__ == "__main__":
     typeDAO = DispTypeDAO()

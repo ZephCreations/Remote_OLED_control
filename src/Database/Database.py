@@ -1,71 +1,60 @@
 import sqlite3
 from sqlite3 import Error
+from pathlib import Path
 
 from .DatabaseExceptions import UniqueConstraintFailedException
 
 
 class Database:
-    _instance = None
-    _connection = None
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(Database, cls).__new__(cls)
-            # Create database connection
-            cls._connection = cls._create_connection()
-            print("=============Created=============")
-        return cls._instance
+    def __init__(self, db_path: str = "../data.db"):
+        self.db_path = Path(db_path).resolve()
+        self.last_id = None
 
-
-    @classmethod
-    def _create_connection(cls):
-        connection = None
+    def _connect(self):
         try:
-            connection = sqlite3.connect("../data.db")
-            print("Connection to SQLite DB successful")
+            connection = sqlite3.connect(self.db_path.as_posix())
+            return connection
         except Error as e:
-            print(f"The error '{e}' occurred")
-
-        return connection
-
-
-    def __init__(self):
-        self.last_id = self._connection.cursor().lastrowid
-
-
-    def get_connection(self):
-        return self.__class__._connection
+            print(f"[Database] Connection error: {e}")
+            raise
 
     def execute_query(self, query, *params):
-        cursor = self._connection.cursor()
         try:
-            cursor.execute(query, params)
-            self.last_id = cursor.lastrowid
-            self._connection.commit()
-            print("Query executed successfully")
+            with self._connect() as conn:
+                cursor = conn.cursor()
+                # Flatten params if a single list or tuple was passed
+                if len(params) == 1 and isinstance(params[0], (list, tuple)):
+                    cursor.execute(query, params[0])
+                else:
+                    cursor.execute(query, params)
+                conn.commit()
+                self.last_id = cursor.lastrowid
+                print("Query executed successfully")
         except Error as e:
-            if e.sqlite_errorcode == sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+            if hasattr(e, "sqlite_errorcode") and e.sqlite_errorcode == sqlite3.SQLITE_CONSTRAINT_UNIQUE:
                 # Unique constraint failed
                 raise UniqueConstraintFailedException(query, params)
-            else:
-                print(f"The error '{e}' occurred")
+            print(f"[Database] Error: {e}")
+            raise
 
     def execute_read_query(self, query, *params):
-        cursor = self._connection.cursor()
-        result = None
         try:
-            cursor.execute(query, params)
-            result = cursor.fetchall()
-            return result
+            with self._connect() as conn:
+                cursor = conn.cursor()
+                # Flatten params if a single list or tuple was passed
+                if len(params) == 1 and isinstance(params[0], (list, tuple)):
+                    cursor.execute(query, params[0])
+                else:
+                    cursor.execute(query, params)
+                rows = cursor.fetchall()
+                return rows
         except Error as e:
-            print(f"The error '{e}' occurred")
+            print(f"[Database] Read error: {e}")
+            raise
 
     def get_last_id(self):
         return self.last_id
-
-    def __del__(self):
-        # On object deletion, release database
-        self._connection.close()
 
 
 if __name__ == "__main__":

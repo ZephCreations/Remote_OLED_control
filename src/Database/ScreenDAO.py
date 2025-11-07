@@ -17,6 +17,19 @@ class ScreenDAO:
         query = "INSERT INTO screen_table (Address) VALUES (?);"
         self.__connection.execute_query(query, screen.address)
         screen.id = self.__connection.get_last_id()
+        return screen
+
+    def update_screen(self, screen: Screen):
+        query = "UPDATE screen_table SET Address = ? WHERE Screen_ID = ?;"
+        cursor = self.__connection.execute_query(query, screen.address, screen.id)
+
+        # Check if anything was updated
+        if cursor and cursor.rowcount == 0:
+            print("[ScreenDAO] Warning: No Matching screen found to update.")
+
+        # Return updated version from DB
+        updated = self.get_screen_by_value(screen.address)
+        return updated or screen
 
     def remove_screen(self, screen: Screen):
         query = "DELETE FROM screen_table WHERE Screen_ID = ?"
@@ -24,15 +37,29 @@ class ScreenDAO:
 
     def get_screen(self, screen: Screen):
         query = f"SELECT * FROM screen_table WHERE Screen_ID = ?"
-        return self.__connection.execute_read_query(query, screen.id)
+        rows = self.__connection.execute_read_query(query, screen.id)
+        return self._to_screen(rows[0]) if rows else None
 
     def get_screen_by_value(self, address: int):
         query = f"SELECT * FROM screen_table WHERE Address = ?"
-        return self.__connection.execute_read_query(query, address)
+        rows = self.__connection.execute_read_query(query, address)
+        return self._to_screen(rows[0]) if rows else None
 
     def get_all(self):
         query = f"SELECT * FROM screen_table"
-        return self.__connection.execute_read_query(query)
+        rows = self.__connection.execute_read_query(query)
+        return [self._to_screen(row) for row in rows]
+
+    # ----------------------------------------------------
+    # Internal helper
+    # ----------------------------------------------------
+    @staticmethod
+    def _to_screen(row):
+        screen = Screen(address=row[1]
+        )
+        screen.id = row[0]
+        return screen
+
 
 if __name__ == "__main__":
     screenDAO = ScreenDAO()
