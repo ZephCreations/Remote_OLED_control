@@ -198,8 +198,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 display = Display(new_profile.id, screen.id, display_type.id, "")
                 # If display isn't added, add it
                 display_get = self.display_dao.get_display_by_value(
-                    display.profile_id, display.screen_id, display.type_id
-                )
+                    display.profile_id, display.screen_id)
                 if display_get is None:
                     self.display_dao.add_display(display)
 
@@ -260,7 +259,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         type_id = self.type_dao.get_type_by_value(DispTypeList.TEXT.name).id
 
         display = Display(profile_id, screen, type_id, text)
-        existing = self.display_dao.get_display_by_value(profile_id, screen, type_id)
+        existing = self.display_dao.get_display_by_value(profile_id, screen)
         if existing is not None:
             self.display_dao.update_display(display)
         else:
@@ -274,14 +273,13 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def handle_timer_form(self):
         screen = int(self.form_data.get("screen", 0))
-        # profile_id = int(self.form_data.get("profile_id"), 1)
         profile_id = self.get_current_profile().id
         type_id = self.type_dao.get_type_by_value(DispTypeList.TIMER.name)
         value = self.form_data.get('timer_val')
 
         display = Display(profile_id, screen, type_id, value)
-        existing = self.display_dao.get_display_by_value(profile_id, screen, type_id)
-        if existing:
+        existing = self.display_dao.get_display_by_value(profile_id, screen)
+        if existing is not None:
             self.display_dao.update_display(display)
         else:
             self.display_dao.add_display(display)

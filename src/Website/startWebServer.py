@@ -40,7 +40,7 @@ def initialise_database(no_screens):
     for screen_no in range(1, no_screens + 1):
         display = Display(profile.id, screen_list[screen_no-1].id, display_type.id, "")
         # If display isn't added, add it
-        display_get = display_dao.get_display_by_value(display.profile_id, display.screen_id, display.type_id)
+        display_get = display_dao.get_display_by_value(display.profile_id, display.screen_id)
         if display_get is None:
             display_dao.add_display(display)
             print(f"Add display {display.id}")

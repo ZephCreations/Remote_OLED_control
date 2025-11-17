@@ -43,8 +43,7 @@ class DisplayDAO:
         # Return the updated version from DB
         updated = self.get_display_by_value(
             display.profile_id,
-            display.screen_id,
-            display.type_id
+            display.screen_id
         )
         return updated or display
 
@@ -57,15 +56,7 @@ class DisplayDAO:
         rows = self.__connection.execute_read_query(query, display_id)
         return self._to_display(rows[0]) if rows else None
 
-    def get_display_by_value(self, profile_id: int, screen_id: int, type_id: int):
-        query = (
-            "SELECT * FROM display_table "
-            "WHERE Profile_ID = ? AND Screen_ID = ? AND Type_ID = ?;"
-        )
-        rows = self.__connection.execute_read_query(query, profile_id, screen_id, type_id)
-        return self._to_display(rows[0]) if rows else None
-
-    def get_display_by_profile_screen(self, profile_id: int, screen_id: int):
+    def get_display_by_value(self, profile_id: int, screen_id: int):
         query = (
             "SELECT * FROM display_table "
             "WHERE Profile_ID = ? AND Screen_ID = ?;"
