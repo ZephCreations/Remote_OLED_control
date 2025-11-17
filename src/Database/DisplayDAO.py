@@ -65,6 +65,14 @@ class DisplayDAO:
         rows = self.__connection.execute_read_query(query, profile_id, screen_id, type_id)
         return self._to_display(rows[0]) if rows else None
 
+    def get_display_by_profile_screen(self, profile_id: int, screen_id: int):
+        query = (
+            "SELECT * FROM display_table "
+            "WHERE Profile_ID = ? AND Screen_ID = ?;"
+        )
+        rows = self.__connection.execute_read_query(query, profile_id, screen_id)
+        return self._to_display(rows[0]) if rows else None
+
     def get_all(self):
         query = f"SELECT * FROM display_table;"
         rows = self.__connection.execute_read_query(query)
