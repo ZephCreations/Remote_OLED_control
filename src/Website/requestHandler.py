@@ -219,6 +219,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 profile_id = self.form_data.get('profile_id')
                 temp_profile = Profile("temp")
                 temp_profile.id = profile_id
+                # Remove displays
+                for display in self.display_dao.get_all_by_profile_id(temp_profile):
+                    self.display_dao.remove_display(display)
+                # Remove profile
                 self.profile_dao.remove_profile(temp_profile)
             else:
                 # Can't delete last profile, do nothing
@@ -227,26 +231,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
         # OLED actions
         if post_type == "Timer":
-            value = self.form_data.get('timer_val')
-            screen = int(self.form_data.get("screen"))
-            if value == "start":
-                # OLEDthread.change_screen(screen, OLEDtimer)
-                speed = int(self.form_data.get("timer_update_speed"))
-                # if speed is not None:
-                    # OLEDthread.update_delay(screen, speed)
-                print("Start timer")
-            elif value == "pause":
-                # oled = OLEDthread.get_oled(screen)
-                # if type(oled) is OLEDtimer:
-                #     oled.pause()
-                print("Pause timer")
-            elif value == "reset":
-                # oled = OLEDthread.get_oled(screen)
-                # if type(oled) is OLEDtimer:
-                #     oled.reset()
-                print("Restart timer")
-            else:
-                print("Value not found")
+            self.handle_timer_form()
             return
         elif post_type == "Text":
             self.handle_text_form()
@@ -274,29 +259,31 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def handle_timer_form(self):
         screen = int(self.form_data.get("screen", 0))
         profile_id = self.get_current_profile().id
-        type_id = self.type_dao.get_type_by_value(DispTypeList.TIMER.name)
-        value = self.form_data.get('timer_val')
+        type_id = self.type_dao.get_type_by_value(DispTypeList.TIMER.name).id
+        timer_action = self.form_data.get('timer_val')
+        timer_value = f"Timer: {timer_action}"
 
-        display = Display(profile_id, screen, type_id, value)
+        display = Display(profile_id, screen, type_id, timer_value)
         existing = self.display_dao.get_display_by_value(profile_id, screen)
+        print(existing)
         if existing is not None:
             self.display_dao.update_display(display)
         else:
             self.display_dao.add_display(display)
 
-        # Update OLEDS
-        if value == "start":
+        # Update OLEDS and timer state
+        if timer_action == "start":
             # OLEDthread.change_screen(screen, OLEDtimer)
             speed = int(self.form_data.get("timer_update_speed"))
             # if speed is not None:
             # OLEDthread.update_delay(screen, speed)
             print("Start timer")
-        elif value == "pause":
+        elif timer_action == "pause":
             # oled = OLEDthread.get_oled(screen)
             # if type(oled) is OLEDtimer:
             #     oled.pause()
             print("Pause timer")
-        elif value == "reset":
+        elif timer_action == "reset":
             # oled = OLEDthread.get_oled(screen)
             # if type(oled) is OLEDtimer:
             #     oled.reset()
