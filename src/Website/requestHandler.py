@@ -224,6 +224,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                     self.display_dao.remove_display(display)
                 # Remove profile
                 self.profile_dao.remove_profile(temp_profile)
+                # Set active profile as first profile
+                WebRequestHandler.active_profile_id = self.profile_dao.get_all()[0].id
             else:
                 # Can't delete last profile, do nothing
                 pass
