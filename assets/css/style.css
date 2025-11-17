@@ -38,14 +38,16 @@ nav h1 {
 }
 
 .label {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
     margin: 0 10%;
 	padding: 0px 10px;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-	align-items: stretch;
-	align-content: stretch;
 	border-radius: 15px;
+}
+.profile-form select {
+    padding: 6px;
+    border-radius: 5px;
 }
 
 .screen-display {

@@ -12,3 +12,7 @@ for (i = 0; i < coll.length; i++) {
     }
   });
 }
+
+document.getElementById("profile_select").addEventListener("change", () => {
+    document.getElementById("profile_form").submit();
+});

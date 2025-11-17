@@ -13,33 +13,57 @@
 
 	<div class="label">
 		<h1>Screens</h1>
+		<form method="post" id="profile_form" class="profile-form">
+			<input type="hidden" name="profile_action" value="switch">
+			<select name="profile" id="profile_select">
+				{% for profile in profiles %}
+					<option value="{{ profile.id }}"
+						{% if profile.id == current_profile.id %}selected{% endif %}>{{ profile.name }}</option>
+				{% endfor %}
+			</select>
+		</form>
 	</div>
 	<div class="container">
-		{% for screen in screens %}
+		{% for display in displays %}
 		<div class="screen-display text-centre">
 			<h2>Screen {{ forloop.counter }}</h2>
 			<div class="screen">
-				<samp>{{ screen }}</samp>
+				<samp>{{ display.content }}</samp>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
 	<br>
 	<div class="container">
+		<form action="" method="post" style="display:flex; gap:10px;">
+			<label class="item" for="profile_name">
+				Profile Name:<br>
+				<input type="text" name="profile_name" id="profile_name"
+				   placeholder="Enter Profile name" value="{{ current_profile.name }}">
+			</label>
+			<button class="btn" name="profile_action" value="new">New Profile</button>
+			<button class="btn" name="profile_action" value="rename">Rename</button>
+			<button class="btn" name="profile_action" value="delete">Delete</button>
+
+			<!-- Send currently selected profile -->
+			<input type="hidden" name="profile_id" value="{{ current_profile.id }}">
+		</form>
+	</div>
+	<br>
+	<div class="container">
 		<div class="item">
 			<h2>Text</h2>
 			<form action="" method="post">
+				<input type="hidden" name="profile" value="{{ current_profile_id }}">
 				<input type="hidden" name="type" value="Text">
 				<label for="text_input">Enter the text to display here:</label>
-				<textarea id="text_input" name="text_input" placeholder="Example text" rows="4" cols="20"></textarea>
+				<textarea id="text_input" name="text_input"
+						  placeholder="Example text" rows="4" cols="20">{{ displays[0].content }}</textarea>
 				<label for="text-screen">Pick the screen to display on here:</label>
 				<select id="text-screen" name="screen">
-					<option value="1">One</option>
-					<option value="2">Two</option>
-					<option value="3">Three</option>
-					<option value="4">Four</option>
-					<option value="5">Five</option>
-					<option value="6">Six</option>
+					{% for display in displays %}
+					<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>
+					{% endfor %}
 				</select>
 				<button type="button" class="btn collapsible">More Options</button>
 				<div class="collapsible-content">
@@ -52,15 +76,13 @@
 		<div class="item">
 			<h2>Timer</h2>
 			<form action="" method="post">
+				<input type="hidden" name="profile" value="{{ current_profile_id }}">
 				<input type="hidden" name="type" value="Timer">
 					<label for="timer-screen">Pick the screen to display on here:</label>
 					<select id="timer-screen" name="screen">
-						<option value="1">One</option>
-						<option value="2">Two</option>
-						<option value="3">Three</option>
-						<option value="4">Four</option>
-						<option value="5">Five</option>
-						<option value="6">Six</option>
+						{% for display in displays %}
+						<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>
+						{% endfor %}
 					</select>
 					<button class="btn inline" name="timer_val" value="start">Start Timer</button>
 					<button class="btn inline" name="timer_val" value="pause">Pause/Play Timer</button>
@@ -88,6 +110,23 @@
 		</div>
 	</div>
 	<br>
+
+	<script>
+		// Store display contents in JS to update template dynamically
+		const displayContents = {
+			{% for display in displays %}
+			"{{ display.screen_id }}": `{{ display.content }}`,
+			{% endfor %}
+		};
+
+		const select = document.getElementById('text-screen');
+		const textarea = document.getElementById('text_input');
+
+		select.addEventListener('change', () => {
+			const selectedId = select.value;
+			textarea.value = displayContents[selectedId] || '';
+		});
+	</script>
 	<script src="../js/script.js"></script>
 </body>
 </html>
