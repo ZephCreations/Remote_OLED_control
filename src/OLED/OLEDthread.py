@@ -10,8 +10,8 @@ from OLED import OLED
 
 
 class OLEDthread:
-    start_port = 2
-    threads = []
+    start_port: int = 2
+    threads: list["OLEDthread | None"] = []
 
     def __init__(self, address, screen_no):
         self.address = address
@@ -80,10 +80,10 @@ class OLEDthread:
             pass
 
     @staticmethod
-    def change_screen(screen_no, function, *args, **kwargs):
+    def change_screen(screen_no, oled_class: type[OLED], *args, **kwargs):
         try:
             old = OLEDthread.threads[screen_no - 1]
-            old.oled = function(old.device, *args, **kwargs)
+            old.oled = oled_class(old.device, *args, **kwargs)
         except IndexError:
             print("Can't change")
 
