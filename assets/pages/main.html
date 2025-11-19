@@ -28,7 +28,7 @@
 		<div class="screen-display text-centre">
 			<h2>Screen {{ forloop.counter }}</h2>
 			<div class="screen">
-				<samp>{{ display.content }}</samp>
+				<samp>{{ display.data.text }}</samp>
 			</div>
 		</div>
 		{% endfor %}
@@ -58,7 +58,7 @@
 				<input type="hidden" name="type" value="Text">
 				<label for="text_input">Enter the text to display here:</label>
 				<textarea id="text_input" name="text_input"
-						  placeholder="Example text" rows="4" cols="20">{{ displays[0].content }}</textarea>
+						  placeholder="Example text" rows="4" cols="20">{{ displays[0].data.text }}</textarea>
 				<label for="text-screen">Pick the screen to display on here:</label>
 				<select id="text-screen" name="screen">
 					{% for display in displays %}
@@ -115,16 +115,18 @@
 		// Store display contents in JS to update template dynamically
 		const displayContents = {
 			{% for display in displays %}
-			"{{ display.screen_id }}": `{{ display.content }}`,
+			"{{ display.screen_id }}": `{{ display.data | tojson }}`,
 			{% endfor %}
 		};
 
 		const select = document.getElementById('text-screen');
 		const textarea = document.getElementById('text_input');
+		const checkbox = document.getElementById('display_console');
 
 		select.addEventListener('change', () => {
 			const selectedId = select.value;
-			textarea.value = displayContents[selectedId] || '';
+			textarea.value = displayContents[selectedId].text || '';
+			checkbox.checked = displayContents[selectedId].console;
 		});
 	</script>
 	<script src="../js/script.js"></script>

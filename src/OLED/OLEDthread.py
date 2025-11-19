@@ -2,7 +2,7 @@ import time
 from time import sleep
 from threading import Event
 
-from smbus2 import SMBus
+# from smbus2 import SMBus
 from luma.core.interface.serial import i2c
 from luma.oled.device import ssd1306
 
@@ -25,8 +25,8 @@ class OLEDthread:
         OLEDthread.threads[self.screen_no - 1] = self
 
         # Initialise BUS and setup I2C communication
-        self.bus = SMBus(1)
-        self.bus.write_byte(self.address, self.port)
+        # self.bus = SMBus(1)
+        # self.bus.write_byte(self.address, self.port)
         serial = i2c(port=1, address=0x3C)
         self.device = ssd1306(serial)
 
@@ -59,7 +59,7 @@ class OLEDthread:
 
             # Perform screen update
             with lock:
-                self.bus.write_byte(0x70, self.port)
+                # self.bus.write_byte(0x70, self.port)
                 self.oled.update()
                 print(f"Updated OLED {self.port}")
 

@@ -2,11 +2,11 @@ import json
 from functools import cached_property
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs, parse_qsl
+from urllib.parse import urlparse, parse_qsl
 from pathlib import Path
 
 from utils import get_project_root
-# from OLED import OLEDthread, OLEDtext, OLEDtimer
+from OLED import OLEDthread, OLEDtext, OLEDtimer
 from template import TemplateLoader
 from Database import *
 
@@ -178,6 +178,20 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         profile_action = self.form_data.get('profile_action')
 
         # Profile Actions
+        if profile_action is not None:
+            self.handle_profile_form()
+            return
+
+        # OLED actions
+        if post_type == "Timer":
+            self.handle_timer_form()
+            return
+        elif post_type == "Text":
+            self.handle_text_form()
+            return
+
+    def handle_profile_form(self):
+        profile_action = self.form_data.get('profile_action')
         if profile_action == "switch":
             try:
                 WebRequestHandler.active_profile_id = int(self.form_data.get("profile"))
@@ -231,21 +245,22 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 pass
             return
 
-        # OLED actions
-        if post_type == "Timer":
-            self.handle_timer_form()
-            return
-        elif post_type == "Text":
-            self.handle_text_form()
-            return
-
     def handle_text_form(self):
+        # Variables
         text = self.form_data.get("text_input")
         screen = int(self.form_data.get("screen", 0))
+        console = False
+        if self.form_data.get("display_console"):
+            console = True
         profile_id = self.get_current_profile().id
         type_id = self.type_dao.get_type_by_value(DispTypeList.TEXT.name).id
 
-        display = Display(profile_id, screen, type_id, text)
+        # Update Database
+        content = {
+            "text": text,
+            "console": console
+        }
+        display = Display(profile_id, screen, type_id, content)
         existing = self.display_dao.get_display_by_value(profile_id, screen)
         if existing is not None:
             self.display_dao.update_display(display)
@@ -253,10 +268,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.display_dao.add_display(display)
 
         # Update OLEDs
-        console = False
-        if self.form_data.get("display_console"):
-            console = True
-        # OLEDthread.change_screen(screen, OLEDtext, text, console)
+        self.update_single(display)
 
     def handle_timer_form(self):
         screen = int(self.form_data.get("screen", 0))
@@ -293,4 +305,30 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         else:
             print("Value not found")
 
+    # -----------------------------------------------------------
+    # OLED functions
+    # -----------------------------------------------------------
+    def update_all(self):
+        displays = self.display_dao.get_all()
+        for display in displays:
+            self.update_single(display)
+        for oled_thread in OLEDthread.threads:
+            oled_thread.trigger_update()
 
+    def update_single(self, display: Display):
+        oled_type = self.get_oled_type(display.type_id)
+        OLEDthread.change_screen(display.screen_id, oled_type, display.data)
+        OLEDthread.threads[display.screen_id - 1].trigger_update()
+
+    def get_oled_type(self, type_id):
+        oled_type = DispType("temp")
+        oled_type.id = type_id
+        oled_type = self.type_dao.get_type(oled_type)
+        return_val = OLEDtext
+        if oled_type.name == DispTypeList.TIMER.name:
+            return_val = OLEDtimer
+        elif oled_type.name == DispTypeList.IMAGE.name:
+            return_val = None
+        elif oled_type.name == DispTypeList.SELECTION.name:
+            return_val = None
+        return return_val

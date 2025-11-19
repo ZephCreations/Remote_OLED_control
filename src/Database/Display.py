@@ -1,3 +1,5 @@
+import json
+
 
 class Display:
 
@@ -6,7 +8,7 @@ class Display:
         self.profile_id = profile_id
         self.screen_id = screen_id
         self.type_id = type_id
-        self.content = content
+        self.data = content
 
     @property
     def id(self):
@@ -41,10 +43,20 @@ class Display:
         self._type_id = value
 
     @property
-    def content(self):
-        return self._content
+    def data(self):
+        return self._data
 
-    @content.setter
-    def content(self, value):
-        self._content = value
+    @data.setter
+    def data(self, value):
+        # If Python dictionary {a: b, c: d}, store it
+        if isinstance(value, dict):
+            self._data = value
+            return
+        # If JSON string, attempt to decode
+        try:
+            self._data = json.loads(value) if value else {}
+        except (TypeError, json.JSONDecodeError):
+            self._data = {"raw": value}
 
+    def json_data(self):
+        return json.dumps(self._data)

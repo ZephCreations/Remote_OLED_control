@@ -21,7 +21,8 @@ class DisplayDAO:
 
     def add_display(self, display: Display):
         query = "INSERT INTO display_table (Profile_ID, Screen_ID, Type_ID, content) VALUES (?, ?, ?, ?);"
-        self.__connection.execute_query(query, display.profile_id, display.screen_id, display.type_id, display.content)
+        self.__connection.execute_query(query, display.profile_id, display.screen_id,
+                                        display.type_id, display.json_data())
         display.id = self.__connection.get_last_id()
         return display # return with updated id
 
@@ -32,7 +33,7 @@ class DisplayDAO:
             "WHERE Profile_ID = ? AND Screen_ID = ?;"
         )
         cursor = self.__connection.execute_query(
-            query, display.content, display.type_id,
+            query, display.json_data(), display.type_id,
             display.profile_id, display.screen_id
         )
 
