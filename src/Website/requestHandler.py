@@ -357,6 +357,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 OLEDthread.set_dynamic(screen_id, not oled.paused)
                 display.data["value"] = 0
                 display.data["paused"] = oled.paused
+                self.update_single(display)
             print("Restart timer")
         else:
             print("Value not found")
