@@ -89,7 +89,6 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             disp_type = DispType("temp")
             disp_type.id = current_display.type_id
             disp_type = self.type_dao.get_type(disp_type)
-            print(disp_type.name)
 
             # Load and render the template dynamically
             context = {
@@ -333,22 +332,23 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             "state": timer_action,
             "delay": speed,
             "value": 0,
+            "paused": True
         }
         display = Display(profile_id, screen_id, type_id, content)
 
         # Update OLEDS and timer state
         if timer_action == "start":
-            print(display.data)
+            display.data["paused"] = False
             self.update_single(display)
             print("Start timer")
         elif timer_action == "pause":
             oled = OLEDthread.get_oled(screen_id)
             if type(oled) is OLEDtimer:
-                self.update_single(display)
                 oled.pause()
                 OLEDthread.set_dynamic(screen_id, not oled.paused)
-                print(oled.paused)
                 display.data["value"] = oled.value
+                display.data["paused"] = oled.paused
+                self.update_single(display)
             print("Pause timer")
         elif timer_action == "reset":
             oled = OLEDthread.get_oled(screen_id)
@@ -356,16 +356,16 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 oled.reset()
                 OLEDthread.set_dynamic(screen_id, not oled.paused)
                 display.data["value"] = 0
+                display.data["paused"] = oled.paused
             print("Restart timer")
         else:
             print("Value not found")
 
         # Update database
-        display.data["text"] = (f"{name}\n\r"
-                                f"{timer_action} - {speed}s\n\r"
+        display.data["text"] = (f"{name}<br>"
+                                f"{timer_action} - {speed}s<br>"
                                 f"{OLEDtimer.format_time(display.data['value'])}")
         existing = self.display_dao.get_display_by_value(profile_id, screen_id)
-        print(existing)
         if existing is not None:
             self.display_dao.update_display(display)
         else:
@@ -393,6 +393,5 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             oled_class = None
 
         # Update screens
-        print(display.data)
         OLEDthread.change_type(display.screen_id, oled_class, display.data)
         OLEDthread.get_thread(display.screen_id).trigger_update()

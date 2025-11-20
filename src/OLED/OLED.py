@@ -15,6 +15,9 @@ class OLED:
         with canvas(self.device) as draw:
             draw.point((0, 0), "white")
 
+    def update_data(self, data):
+        self.data = data
+
     def update(self):
         with canvas(self.device) as draw:
             draw.point((0, 0), "white")

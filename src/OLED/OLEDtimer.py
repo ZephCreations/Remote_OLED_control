@@ -12,7 +12,12 @@ class OLEDtimer(OLED):
         self.starting_time = time()
         self.paused_since = None
         self.pause_total = 0.0
-        self.value = 0.0
+        self.value = self.data.get("value")
+
+    def update_data(self, data):
+        super().update_data(data)
+        self.name = self.data.get("name")
+        self.value = self.data.get("value")
 
     def update(self):
         with canvas(self.device) as draw:

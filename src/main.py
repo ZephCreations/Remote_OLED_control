@@ -114,11 +114,10 @@ if __name__ == "__main__":
     with concurrent.futures.ThreadPoolExecutor(max_workers=7) as executor:
         executor.submit(server.serve_forever)
 
+        print("====================================================\n"
+              "                  Starting Server\n"
+              "====================================================")
         for oled_thread in OLEDthread.threads:
             executor.submit(oled_thread.update, oled_port_lock, stop_event)
-
-        # Set delay and start looping
-        for screen_number in range(1, num_screens+1):
-            OLEDthread.set_delay(screen_number, 1)
 
 

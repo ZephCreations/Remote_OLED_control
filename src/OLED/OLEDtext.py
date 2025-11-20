@@ -10,12 +10,18 @@ class OLEDtext(OLED):
 
     def __init__(self, device, data: dict):
         OLED.__init__(self, device, data)
-        self.text = self.wrap_text(self.data.get("text"))
-        self.display_console = self.data.get("console")
+        self.text = ""
+        self.display_console = False
+        self.update_data(data)
 
+    def update_data(self, data):
+        super().update_data(data)
+        self.text = self.wrap_text(self.data.get("text") or "")
+        self.display_console = self.data.get("console")
 
     def update(self):
         if self.display_console:
+            print("Console mode")
             term = terminal(self.device)
             term.println(self.text)
         else:

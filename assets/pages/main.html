@@ -94,7 +94,8 @@
 				<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
 				<input type="hidden" name="type" value="Timer">
 					<button class="btn inline" name="timer_val" value="start">Start Timer</button>
-					<button class="btn inline" name="timer_val" value="pause">Pause/Play Timer</button>
+					<button class="btn inline" name="timer_val" value="pause"
+					>{% if current_display.data.paused %}Resume Timer{% else %}Pause Timer{% endif %}</button>
 					<button class="btn inline" name="timer_val" value="reset">Reset Timer</button>
 				<button type="button" class="btn collapsible">More Options</button>
 				<div class="collapsible-content">
