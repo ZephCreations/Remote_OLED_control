@@ -31,10 +31,10 @@ class OLEDtext(OLED):
         else:
             with canvas(self.device) as draw:
                 # Legacy draw for monospace
-                text(draw, (0, 0), f"{self.text}", font=CP437_FONT, fill="white")
+                # text(draw, (0, 0), f"{self.text}", font=CP437_FONT, fill="white")
 
                 # Modern draw with Pillow
-                # draw.text((0, 0), f"{self.text}", font=TINY_FONT, fill="white", font_size=12)
+                draw.text((0, 0), f"{self.text}", fill="white", font_size=12)
 
 
     @staticmethod
