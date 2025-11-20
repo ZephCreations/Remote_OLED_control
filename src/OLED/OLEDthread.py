@@ -31,6 +31,7 @@ class OLEDthread:
 
         # Add OLED and setup variables for updating
         self.oled = OLED(self.device, {})
+        self.oled.loading_anim()
         self.update_event = Event()
         self.dynamic_mode = False
         self.delay = 1

@@ -8,9 +8,8 @@ class OLED:
         self.device = device
         self.data = data
         self.is_dynamic = is_dynamic
-        self._loading()
 
-    def _loading(self):
+    def loading_anim(self):
         self.device.clear()
         with canvas(self.device) as draw:
             draw.point((0, 0), "white")
