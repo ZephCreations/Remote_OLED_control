@@ -10,7 +10,6 @@
 	<nav>
 		<h1>OLED Control Panel</h1>
 	</nav>
-
 	<div class="label">
 		<h1>Screens</h1>
 		<form action="" method="post" id="profile_form" class="profile-form">
@@ -23,6 +22,7 @@
 			</select>
 		</form>
 	</div>
+	<!-- Display Box -->
 	<div class="container">
 		{% for display in displays %}
 		<div class="screen-display text-centre">
@@ -34,6 +34,7 @@
 		{% endfor %}
 	</div>
 	<br>
+	<!-- Profile Edit and Screen Select -->
 	<div class="container">
 		<form action="" method="post" style="display:flex; gap:10px;">
 			<label class="item" for="profile_name">
@@ -64,7 +65,9 @@
 		</form>
 	</div>
 	<br>
+	<!-- Cards -->
 	<div class="container">
+		<!-- Text -->
 		<div class="item">
 			<h2>Text</h2>
 			<form action="" method="post">
@@ -72,43 +75,35 @@
 				<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
 				<input type="hidden" name="type" value="Text">
 				<label for="text_input">Enter the text to display here:</label>
-				<textarea id="text_input" name="text_input"
-						  placeholder="Example text" rows="4" cols="20">{{ displays[0].data.text }}</textarea>
-<!--				<label for="text-screen">Pick the screen to display on here:</label>-->
-<!--				<select id="text-screen" name="screen">-->
-<!--					{% for display in displays %}-->
-<!--					<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>-->
-<!--					{% endfor %}-->
-<!--				</select>-->
+				<textarea id="text_input" name="text_input" placeholder="Example text" rows="4" cols="20"
+				>{% if current_type == "TEXT" %}{{ current_display.data.text }}{% endif %}</textarea>
 				<button type="button" class="btn collapsible">More Options</button>
 				<div class="collapsible-content">
-					<input type="checkbox" id="display_console" name="display_console" value="True">
+					<input type="checkbox" id="display_console" name="display_console" value="True"
+						{% if current_display.data.console %}checked{% endif %}>
 					<label for="display_console">Display text without markup.</label>
 				</div>
 				<button class="btn">Submit</button>
 			</form>
 		</div>
+		<!-- Timer -->
 		<div class="item">
 			<h2>Timer</h2>
 			<form action="" method="post">
 				<input type="hidden" name="profile" value="{{ current_profile_id }}">
 				<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
 				<input type="hidden" name="type" value="Timer">
-<!--					<label for="timer-screen">Pick the screen to display on here:</label>-->
-<!--					<select id="timer-screen" name="screen">-->
-<!--						{% for display in displays %}-->
-<!--						<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>-->
-<!--						{% endfor %}-->
-<!--					</select>-->
 					<button class="btn inline" name="timer_val" value="start">Start Timer</button>
 					<button class="btn inline" name="timer_val" value="pause">Pause/Play Timer</button>
 					<button class="btn inline" name="timer_val" value="reset">Reset Timer</button>
 				<button type="button" class="btn collapsible">More Options</button>
 				<div class="collapsible-content">
 					<label for="timer_name">Custom Name:</label>
-					<input type="text" id="timer_name" name="timer_name" placeholder="Timer">
+					<input type="text" id="timer_name" name="timer_name" placeholder="Timer"
+						   value="{{ current_display.data.name }}">
 					<label for="timer_update_speed">Interval at which the timer updates (in seconds):</label>
-					<input type="text" id="timer_update_speed" name="timer_update_speed" value="1">
+					<input type="text" id="timer_update_speed" name="timer_update_speed"
+						   value="{{ current_display.data.delay }}">
 				</div>
 			</form>
 		</div>
@@ -126,25 +121,6 @@
 		</div>
 	</div>
 	<br>
-
-	<script>
-		// Store display contents in JS to update template dynamically
-		const displayContents = {
-			{% for display in displays %}
-			"{{ display.screen_id }}": `{{ display.data | tojson }}`,
-			{% endfor %}
-		};
-
-		const select = document.getElementById('text-screen');
-		const textarea = document.getElementById('text_input');
-		const checkbox = document.getElementById('display_console');
-
-		select.addEventListener('change', () => {
-			const selectedId = select.value;
-			textarea.value = displayContents[selectedId].text || '';
-			checkbox.checked = displayContents[selectedId].console;
-		});
-	</script>
 	<script src="../js/script.js"></script>
 </body>
 </html>

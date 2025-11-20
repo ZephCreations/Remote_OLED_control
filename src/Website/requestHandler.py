@@ -83,13 +83,22 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
             # Get all displays
             displays = self.display_dao.get_all_by_profile_id(current_profile)
+            current_display = displays[current_screen.id - 1]
+
+            # Get type
+            disp_type = DispType("temp")
+            disp_type.id = current_display.type_id
+            disp_type = self.type_dao.get_type(disp_type)
+            print(disp_type.name)
 
             # Load and render the template dynamically
             context = {
                 "profiles": profiles,
                 "current_profile": current_profile,
                 "displays": displays,
+                "current_display": current_display,
                 "current_screen": current_screen,
+                "current_type": disp_type.name,
             }
             tpl = loader.load("pages/main.html")
             html = tpl.render(context)

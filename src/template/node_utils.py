@@ -35,8 +35,9 @@ def eval_condition(expr, context):
     """Evaluate a boolean condition safely using the context.
     Replaces dotted/indexed tokens with safe placeholder then evaluates with a restricted locals dict."""
 
-    # Tokens that look like variable references
-    tokens = re.findall(r"[A-Za-z_][A-Za-z0-9_.\[\]]*", expr)
+    # Match tokens that look like variable references, ignore those preceded by a quote
+    # (strings like "EXAMPLE" and 'EXAMPLE' are not tokenized)
+    tokens = re.findall(r'(?<!["\'])[A-Za-z_][A-Za-z0-9_.\[\]]*', expr)
 
     # keywords to avoid
     keywords = {"and", "or", "not", "True", "False", "None"}
@@ -50,7 +51,6 @@ def eval_condition(expr, context):
 
     safe_locals = {}
     expr_mod = expr
-
     var_idx = 0
     for tok in unique_tokens:
         if tok in keywords:
