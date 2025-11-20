@@ -5,8 +5,6 @@ from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qsl
 from pathlib import Path
 
-from PIL.ImageChops import screen
-
 from utils import get_project_root
 from OLED import OLEDthread, OLEDtext, OLEDtimer
 from template import TemplateLoader
@@ -168,16 +166,18 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
         # If no active profile, use default
         if profile_id is None:
+            print("No active profile")
             WebRequestHandler.active_profile_id = self.default_profile.id
             return self.default_profile
 
         # Get from db
-        temp_profile = Profile("temp")
-        temp_profile.id = profile_id
-        profile = self.profile_dao.get_profile(temp_profile)
+        profile = Profile("temp")
+        profile.id = profile_id
+        profile = self.profile_dao.get_profile(profile)
 
         # If deleted, reset to default
         if profile is None:
+            print(f"No profile by id {profile_id}")
             WebRequestHandler.active_profile_id = self.default_profile.id
             return self.default_profile
 
@@ -189,14 +189,15 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
         # If no active, use first
         if screen_id is None:
-            screen = self.screen_dao.get_all()[0]
-            WebRequestHandler.active_profile_id = screen.id
-            return screen
+            print("No active screen")
+            first_screen = self.screen_dao.get_all()[0]
+            WebRequestHandler.active_profile_id = first_screen.id
+            return first_screen
 
         # Get from db
-        temp_screen = Screen("temp")
-        temp_screen.id = screen_id
-        screen = self.screen_dao.get_screen(temp_screen)
+        screen = Screen("temp")
+        screen.id = screen_id
+        screen = self.screen_dao.get_screen(screen)
 
         return screen
 
