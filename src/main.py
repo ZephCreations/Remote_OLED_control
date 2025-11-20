@@ -72,22 +72,22 @@ def initialise_database(no_screens):
             oled_class = None
 
         # Update screens
-        OLEDthread.change_screen(display.screen_id, oled_class, display.data)
+        OLEDthread.change_type(display.screen_id, oled_class, display.data)
         OLEDthread.threads[display.screen_id - 1].trigger_update()
 
 
 def setup_oleds():
     # TODO: Reset to previous values
-    OLEDthread.change_screen(1, OLEDtext, {"text": "."})
+    OLEDthread.change_type(1, OLEDtext, {"text": "."})
     OLEDthread.set_delay(1, 0.5)
 
-    OLEDthread.change_screen(2, OLEDtext, {"text": "."})
+    OLEDthread.change_type(2, OLEDtext, {"text": "."})
     OLEDthread.set_delay(2, 0.5)
 
-    OLEDthread.change_screen(3, OLEDtext, {"text": "."})
+    OLEDthread.change_type(3, OLEDtext, {"text": "."})
     OLEDthread.set_delay(3, 0.5)
 
-    OLEDthread.change_screen(4, OLEDtext, {"text": "."})
+    OLEDthread.change_type(4, OLEDtext, {"text": "."})
     OLEDthread.set_delay(4, 0.5)
 
 

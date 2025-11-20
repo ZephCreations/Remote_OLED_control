@@ -89,15 +89,25 @@ class OLEDthread:
             pass
 
     @staticmethod
-    def change_screen(screen_no, oled_class: type[OLED], data):
+    def change_type(screen_no, oled_class: type[OLED], data):
         try:
             old = OLEDthread.threads[screen_no - 1]
-            old.oled = oled_class(old.device, data)
+
+            # Only create new instance if class has changed
+            if type(old.oled) is not oled_class:
+                old.oled = oled_class(old.device, data)
+            else:
+                # Update existing instance instead of replacing
+                old.oled.data = data
+
+            # Handle dynamic updating
             if old.oled.is_dynamic:
                 # Check if new class is dynamic, if so update with data
-                OLEDthread.set_delay(screen_no, data.delay)
+                OLEDthread.set_delay(screen_no, data['delay'])
                 # Default to dynamic, allow values to be stopped if needed.
                 OLEDthread.set_dynamic(screen_no, True)
+            else:
+                OLEDthread.set_dynamic(screen_no, False)
         except IndexError:
             print("Can't change")
 
@@ -105,6 +115,13 @@ class OLEDthread:
     def get_oled(cls, screen_no):
         try:
             return OLEDthread.threads[screen_no - 1].oled
+        except IndexError:
+            return None
+
+    @classmethod
+    def get_thread(cls, screen_no):
+        try:
+            return OLEDthread.threads[screen_no - 1]
         except IndexError:
             return None
 

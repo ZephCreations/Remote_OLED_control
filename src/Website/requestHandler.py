@@ -338,22 +338,23 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
         # Update OLEDS and timer state
         if timer_action == "start":
+            print(display.data)
             self.update_single(display)
-            OLEDthread.set_dynamic(screen_id, True)
-            OLEDthread.set_delay(screen_id, speed)
             print("Start timer")
         elif timer_action == "pause":
             oled = OLEDthread.get_oled(screen_id)
             if type(oled) is OLEDtimer:
+                self.update_single(display)
                 oled.pause()
-                OLEDthread.set_dynamic(screen_id, not OLEDthread.threads[screen_id - 1].dynamic_mode)
+                OLEDthread.set_dynamic(screen_id, not oled.paused)
+                print(oled.paused)
                 display.data["value"] = oled.value
             print("Pause timer")
         elif timer_action == "reset":
             oled = OLEDthread.get_oled(screen_id)
             if type(oled) is OLEDtimer:
                 oled.reset()
-                OLEDthread.set_dynamic(screen_id, True)
+                OLEDthread.set_dynamic(screen_id, not oled.paused)
                 display.data["value"] = 0
             print("Restart timer")
         else:
@@ -392,5 +393,6 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             oled_class = None
 
         # Update screens
-        OLEDthread.change_screen(display.screen_id, oled_class, display.data)
-        OLEDthread.threads[display.screen_id - 1].trigger_update()
+        print(display.data)
+        OLEDthread.change_type(display.screen_id, oled_class, display.data)
+        OLEDthread.get_thread(display.screen_id).trigger_update()
