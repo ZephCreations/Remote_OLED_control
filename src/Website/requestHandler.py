@@ -275,7 +275,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         profile_id = self.get_current_profile().id
         type_id = self.type_dao.get_type_by_value(DispTypeList.TIMER.name).id
         timer_action = self.form_data.get('timer_val')
-        speed = int(self.form_data.get("timer_update_speed") or 1)
+        speed = float(self.form_data.get("timer_update_speed") or 1)
         name = self.form_data.get('timer_name') or "Timer"
 
         # Create display object
