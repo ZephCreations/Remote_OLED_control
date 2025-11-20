@@ -14,11 +14,3 @@ class Screen:
     def id(self, value):
         self._id = value
 
-    @property
-    def number(self):
-        return self._number
-
-    @number.setter
-    def number(self, value):
-        self._number = value
-

@@ -72,6 +72,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             # Get current profile/display
             current_profile = self.get_current_profile()
             current_screen = self.get_current_screen()
+            print(f"Active: profile {current_profile.name}, screen {current_screen.id}")
 
             # Get all profiles
             profiles = self.profile_dao.get_all()
@@ -191,7 +192,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         if screen_id is None:
             print("No active screen")
             first_screen = self.screen_dao.get_all()[0]
-            WebRequestHandler.active_profile_id = first_screen.id
+            WebRequestHandler.active_screen_id = first_screen.id
             return first_screen
 
         # Get from db
@@ -240,7 +241,12 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             # Add profile
             profile_name = self.form_data.get('profile_name')
             new_profile = Profile(profile_name)
-            new_profile = self.profile_dao.add_profile(new_profile)
+            try:
+                new_profile = self.profile_dao.add_profile(new_profile)
+            except DatabaseExceptions.UniqueConstraintFailedException:
+                # Do nothing if profile already exists
+                print("Profile already exists")
+                return
 
             # Add linked displays
             display_type = self.type_dao.get_type_by_value(DispTypeList.TEXT.name)
