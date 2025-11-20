@@ -35,10 +35,6 @@ class OLEDthread:
         self.dynamic_mode = False
         self.delay = 1
 
-    def trigger_update(self):
-        """External force-update (interrupt, used by web requests)"""
-        self.update_event.set()
-
     def _set_dynamic(self, state: bool):
         """Enable/disable dynamic auto-updating (e.g. timers)"""
         self.dynamic_mode = state
@@ -47,6 +43,10 @@ class OLEDthread:
 
     def _set_delay(self, delay):
         self.delay = delay
+
+    def trigger_update(self):
+        """External force-update (interrupt, used by web requests)"""
+        self.update_event.set()
 
     def update(self, lock, stop_event):
         while not stop_event.is_set():
@@ -71,6 +71,9 @@ class OLEDthread:
                 self.update_event.wait(self.delay)
                 self.update_event.clear()
 
+    # -----------------------------------------------------------
+    # Static Methods
+    # -----------------------------------------------------------
     @staticmethod
     def set_delay(screen_no, delay):
         try:

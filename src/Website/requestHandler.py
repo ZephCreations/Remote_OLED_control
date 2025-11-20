@@ -232,6 +232,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         if profile_action == "switch":
             try:
                 WebRequestHandler.active_profile_id = int(self.form_data.get("profile"))
+                self.update_all()
             except (TypeError, ValueError):
                 pass
             return
@@ -255,6 +256,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
             # Set active profile
             WebRequestHandler.active_profile_id = new_profile.id
+            self.update_all()
             return
         elif profile_action == "rename":
             profile_name = self.form_data.get('profile_name')
@@ -277,6 +279,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 self.profile_dao.remove_profile(temp_profile)
                 # Set active profile as first profile
                 WebRequestHandler.active_profile_id = self.profile_dao.get_all()[0].id
+                self.update_all()
             else:
                 # Can't delete last profile, do nothing
                 pass
@@ -371,26 +374,24 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     # OLED functions
     # -----------------------------------------------------------
     def update_all(self):
-        displays = self.display_dao.get_all()
+        displays = self.display_dao.get_all_by_profile_id(self.get_current_profile())
         for display in displays:
             self.update_single(display)
-        for oled_thread in OLEDthread.threads:
-            oled_thread.trigger_update()
 
     def update_single(self, display: Display):
-        oled_type = self.get_oled_type(display.type_id)
-        OLEDthread.change_screen(display.screen_id, oled_type, display.data)
-        OLEDthread.threads[display.screen_id - 1].trigger_update()
+        # Get OLED type
+        disp_type = DispType("temp")
+        disp_type.id = display.type_id
+        disp_type = self.type_dao.get_type(disp_type)
+        oled_class = OLEDtext
+        if disp_type.name == DispTypeList.TIMER.name:
+            oled_class = OLEDtimer
+            OLEDthread.set_delay(display.screen_id, display.data.delay)
+            OLEDthread.set_dynamic(display.screen_id, OLEDthread.threads[display.screen_id - 1].dynamic_mode)
+        elif disp_type.name == DispTypeList.IMAGE.name:
+            oled_class = None
+        elif disp_type.name == DispTypeList.SELECTION.name:
+            oled_class = None
 
-    def get_oled_type(self, type_id):
-        oled_type = DispType("temp")
-        oled_type.id = type_id
-        oled_type = self.type_dao.get_type(oled_type)
-        return_val = OLEDtext
-        if oled_type.name == DispTypeList.TIMER.name:
-            return_val = OLEDtimer
-        elif oled_type.name == DispTypeList.IMAGE.name:
-            return_val = None
-        elif oled_type.name == DispTypeList.SELECTION.name:
-            return_val = None
-        return return_val
+        OLEDthread.change_screen(display.screen_id, oled_class, display.data)
+        OLEDthread.threads[display.screen_id - 1].trigger_update()

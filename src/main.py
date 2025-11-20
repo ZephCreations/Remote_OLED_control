@@ -5,8 +5,7 @@ from Website import WebRequestHandler
 from http.server import ThreadingHTTPServer
 from Database import *
 
-from OLED import OLEDthread
-from OLED import OLEDtext
+from OLED import OLEDthread, OLEDtext, OLEDtimer
 
 
 def initialise_database(no_screens):
@@ -27,28 +26,57 @@ def initialise_database(no_screens):
     print(screen_list)
 
     # Add default profile.
-    # TODO: Add restore to previous settings (like previous profiles etc.)
     profile_dao = ProfileDAO()
-    profile = Profile("Default")
-    get_value = profile_dao.get_profile_by_value("Default")
-    if get_value is None:
-        profile = profile_dao.add_profile(profile)
+    profiles = profile_dao.get_all()
+    if len(profiles) <= 1:
+        # No profiles exist, add default
+        profile = Profile("Default")
+        get_value = profile_dao.get_profile_by_value("Default")
+        if get_value is None:
+            profile = profile_dao.add_profile(profile)
+        else:
+            profile = get_value
     else:
-        profile = get_value
+        # Default first profile
+        profile = profiles[0]
 
     # Add default displays (TEXT type)
     type_dao = DispTypeDAO()
     display_type = type_dao.get_type_by_value(DispTypeList.TEXT.name)
     display_dao = DisplayDAO()
     for screen_no in range(1, no_screens + 1):
-        display = Display(profile.id, screen_list[screen_no-1].id, display_type.id, "")
+        data = {}
+        display = Display(
+            profile.id,
+            screen_list[screen_no-1].id,
+            display_type.id,
+            {'text': 'H', 'console': False}
+        )
         # If display isn't added, add it
         display_get = display_dao.get_display_by_value(display.profile_id, display.screen_id)
         if display_get is None:
             display_dao.add_display(display)
             print(f"Add display {display.id}")
-        else:
+        else:            # Update OLEDs to show updated display
             display = display_get
+
+            # Get OLED type
+            disp_type = DispType("temp")
+            disp_type.id = display.type_id
+            disp_type = type_dao.get_type(disp_type)
+            oled_class = OLEDtext
+            if disp_type.name == DispTypeList.TIMER.name:
+                oled_class = OLEDtimer
+                OLEDthread.set_delay(display.screen_id, display.data.delay)
+                OLEDthread.set_dynamic(display.screen_id, OLEDthread.threads[display.screen_id - 1].dynamic_mode)
+            elif disp_type.name == DispTypeList.IMAGE.name:
+                oled_class = None
+            elif disp_type.name == DispTypeList.SELECTION.name:
+                oled_class = None
+
+            OLEDthread.change_screen(display.screen_id, oled_class, display.data)
+            OLEDthread.threads[display.screen_id - 1].trigger_update()
+
 
 def setup_oleds():
     # TODO: Reset to previous values
