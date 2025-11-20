@@ -313,7 +313,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         # Update database
         display.data["text"] = (f"{name}\n\r"
                                 f"{timer_action} - {speed}s\n\r"
-                                f"{OLEDtimer.format_time(display.data["value"])}")
+                                f"{OLEDtimer.format_time(display.data['value'])}")
         existing = self.display_dao.get_display_by_value(profile_id, screen)
         print(existing)
         if existing is not None:
