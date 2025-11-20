@@ -1,5 +1,6 @@
 import concurrent.futures
 import threading
+import signal
 
 from Website import WebRequestHandler
 from http.server import ThreadingHTTPServer
@@ -97,7 +98,15 @@ def setup_threads(num, starting_port, address):
     OLEDthread.create_threads(num, starting_port, address)
 
 
+def signal_handler(sig, frame):
+    print("Ctrl+C detected, stopping...")
+    stop_event.set()
+
+
 if __name__ == "__main__":
+    # Register signal handler
+    signal.signal(signal.SIGINT, signal_handler)
+
     # Initialise OLEDs
     multiplexer_address = 0x70
     num_screens = 6
