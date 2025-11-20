@@ -7,20 +7,38 @@
 	<link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
-	<nav>
+	<nav class="text-centre">
 		<h1>OLED Control Panel</h1>
 	</nav>
-	<div class="label">
+	<div class="nav-title">
 		<h1>Screens</h1>
-		<form action="" method="post" id="profile_form" class="profile-form">
-			<input type="hidden" name="profile_action" value="switch">
-			<select name="profile" id="profile_select">
-				{% for profile in profiles %}
-					<option value="{{ profile.id }}"
-						{% if profile.id == current_profile.id %}selected{% endif %}>{{ profile.name }}</option>
-				{% endfor %}
-			</select>
-		</form>
+		<div class="nav-forms">
+			<form action="" method="post" id="profile_form" class="nav-form">
+				<input type="hidden" name="profile_action" value="switch">
+				<label>
+					Profile:
+					<select name="profile" id="profile_select">
+						{% for profile in profiles %}
+							<option value="{{ profile.id }}"
+								{% if profile.id == current_profile.id %}selected{% endif %}>{{ profile.name }}</option>
+						{% endfor %}
+					</select>
+				</label>
+			</form>
+			<form action="" method="post" id="screen_form" class="nav-form">
+				<input type="hidden" name="screen_action" value="switch">
+				<label>
+					Screen:
+					<select name="screen" id="screen_select">
+						{% for display in displays %}
+							<option value="{{ display.screen_id }}"
+								{% if display.screen_id == current_screen.id %}selected{% endif %}
+							>Screen {{ forloop.counter }}</option>
+						{% endfor %}
+					</select>
+				</label>
+			</form>
+		</div>
 	</div>
 	<!-- Display Box -->
 	<div class="container">
@@ -36,7 +54,7 @@
 	<br>
 	<!-- Profile Edit and Screen Select -->
 	<div class="container">
-		<form action="" method="post" style="display:flex; gap:10px;">
+		<form action="" method="post" class="flex-form">
 			<label class="item" for="profile_name">
 				Profile Name:<br>
 				<input type="text" name="profile_name" id="profile_name"
@@ -49,19 +67,6 @@
 			<!-- Send currently selected profile -->
 			<input type="hidden" name="profile_id" value="{{ current_profile.id }}">
 			<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
-		</form>
-		<form action="" method="post" id="screen_form" style="display:flex; gap:1-px;">
-			<input type="hidden" name="screen_action" value="switch">
-			<label class="item" for="screen_select">
-				Screen to update:
-				<select name="screen" id="screen_select">
-					{% for display in displays %}
-						<option value="{{ display.screen_id }}"
-							{% if display.screen_id == current_screen.id %}selected{% endif %}
-						>Screen {{ forloop.counter }}</option>
-					{% endfor %}
-				</select>
-			</label>
 		</form>
 	</div>
 	<br>
