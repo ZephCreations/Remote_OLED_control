@@ -4,9 +4,10 @@ from luma.core.render import canvas
 
 
 class OLED:
-    def __init__(self, device, data: dict):
+    def __init__(self, device, data: dict, is_dynamic=False):
         self.device = device
         self.data = data
+        self.is_dynamic = is_dynamic
         self._loading()
 
     def _loading(self):

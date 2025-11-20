@@ -386,12 +386,11 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         oled_class = OLEDtext
         if disp_type.name == DispTypeList.TIMER.name:
             oled_class = OLEDtimer
-            OLEDthread.set_delay(display.screen_id, display.data.delay)
-            OLEDthread.set_dynamic(display.screen_id, OLEDthread.threads[display.screen_id - 1].dynamic_mode)
         elif disp_type.name == DispTypeList.IMAGE.name:
             oled_class = None
         elif disp_type.name == DispTypeList.SELECTION.name:
             oled_class = None
 
+        # Update screens
         OLEDthread.change_screen(display.screen_id, oled_class, display.data)
         OLEDthread.threads[display.screen_id - 1].trigger_update()

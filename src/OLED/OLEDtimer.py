@@ -6,7 +6,7 @@ from luma.core.render import canvas
 
 class OLEDtimer(OLED):
     def __init__(self, device, data: dict):
-        OLED.__init__(self, device, data)
+        OLED.__init__(self, device, data, True)
         self.name = self.data.get("name")
         self.paused = False
         self.starting_time = time()

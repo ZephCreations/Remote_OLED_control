@@ -93,6 +93,11 @@ class OLEDthread:
         try:
             old = OLEDthread.threads[screen_no - 1]
             old.oled = oled_class(old.device, data)
+            if old.oled.is_dynamic:
+                # Check if new class is dynamic, if so update with data
+                OLEDthread.set_delay(screen_no, data.delay)
+                # Default to dynamic, allow values to be stopped if needed.
+                OLEDthread.set_dynamic(screen_no, True)
         except IndexError:
             print("Can't change")
 
