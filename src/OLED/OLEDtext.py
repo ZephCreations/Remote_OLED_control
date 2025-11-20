@@ -2,7 +2,7 @@ from OLED import OLED
 
 from luma.core.render import canvas
 from luma.core.virtual import terminal
-from luma.core.legacy.font import CP437_FONT
+from luma.core.legacy.font import TINY_FONT
 
 from textwrap import wrap
 
@@ -27,7 +27,7 @@ class OLEDtext(OLED):
             term.println(self.text)
         else:
             with canvas(self.device) as draw:
-                draw.text((0, 0), f"{self.text}", font=CP437_FONT, fill="white", font_size=12)
+                draw.text((0, 0), f"{self.text}", font=TINY_FONT, fill="white", font_size=12)
 
 
     @staticmethod
