@@ -99,7 +99,6 @@ def setup_threads(num, starting_port, address):
 
 
 def signal_handler(sig, frame):
-    print("Ctrl+C detected, stopping...")
     stop_event.set()
 
 
