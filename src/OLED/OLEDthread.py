@@ -2,9 +2,8 @@ import time
 from time import sleep
 from threading import Event
 
-from smbus2 import SMBus
-from luma.core.interface.serial import i2c
-from luma.oled.device import ssd1306
+from .safe_smbus import SMBus
+from .safe_oled import i2c, ssd1306
 
 from OLED import OLED
 
@@ -31,7 +30,7 @@ class OLEDthread:
         self.device = ssd1306(serial)
 
         # Add OLED and setup variables for updating
-        self.oled = OLED(self.device)
+        self.oled = OLED(self.device, {})
         self.update_event = Event()
         self.dynamic_mode = False
         self.delay = 1
@@ -40,13 +39,13 @@ class OLEDthread:
         """External force-update (interrupt, used by web requests)"""
         self.update_event.set()
 
-    def set_dynamic(self, state: bool):
+    def _set_dynamic(self, state: bool):
         """Enable/disable dynamic auto-updating (e.g. timers)"""
         self.dynamic_mode = state
         if state:
             self.update_event.set() # wake if sleeping
 
-    def set_delay(self, delay):
+    def _set_delay(self, delay):
         self.delay = delay
 
     def update(self, lock, stop_event):
@@ -73,17 +72,24 @@ class OLEDthread:
                 self.update_event.clear()
 
     @staticmethod
-    def update_delay(screen_no, delay):
+    def set_delay(screen_no, delay):
         try:
-            OLEDthread.threads[screen_no - 1].set_delay(delay)
+            OLEDthread.threads[screen_no - 1]._set_delay(delay)
         except IndexError:
             pass
 
     @staticmethod
-    def change_screen(screen_no, oled_class: type[OLED], *args, **kwargs):
+    def set_dynamic(screen_no, state: bool):
+        try:
+            OLEDthread.threads[screen_no - 1]._set_dynamic(state)
+        except IndexError:
+            pass
+
+    @staticmethod
+    def change_screen(screen_no, oled_class: type[OLED], data):
         try:
             old = OLEDthread.threads[screen_no - 1]
-            old.oled = oled_class(old.device, *args, **kwargs)
+            old.oled = oled_class(old.device, data)
         except IndexError:
             print("Can't change")
 

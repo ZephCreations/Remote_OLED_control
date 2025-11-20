@@ -5,9 +5,9 @@ from luma.core.render import canvas
 
 
 class OLEDtimer(OLED):
-    def __init__(self, device, name="Timer"):
-        OLED.__init__(self, device)
-        self.name = name
+    def __init__(self, device, data: dict):
+        OLED.__init__(self, device, data)
+        self.name = self.data.get("name")
         self.paused = False
         self.starting_time = time()
         self.value = 0
@@ -28,6 +28,12 @@ class OLEDtimer(OLED):
 
     def _format_time(self):
         m, s = divmod(self.value, 60)
+        h, m = divmod(m, 60)
+        return f"{int(h):d}:{int(m):02d}:{s:.02f}"
+
+    @staticmethod
+    def format_time(value):
+        m, s = divmod(value, 60)
         h, m = divmod(m, 60)
         return f"{int(h):d}:{int(m):02d}:{s:.02f}"
 

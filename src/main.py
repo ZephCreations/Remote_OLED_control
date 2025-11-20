@@ -52,17 +52,17 @@ def initialise_database(no_screens):
 
 def setup_oleds():
     # TODO: Reset to previous values
-    OLEDthread.change_screen(1, OLEDtext)
-    OLEDthread.update_delay(1, 0.5)
+    OLEDthread.change_screen(1, OLEDtext, {"text": "."})
+    OLEDthread.set_delay(1, 0.5)
 
-    OLEDthread.change_screen(2, OLEDtext)
-    OLEDthread.update_delay(2, 0.5)
+    OLEDthread.change_screen(2, OLEDtext, {"text": "."})
+    OLEDthread.set_delay(2, 0.5)
 
-    OLEDthread.change_screen(3, OLEDtext)
-    OLEDthread.update_delay(3, 0.5)
+    OLEDthread.change_screen(3, OLEDtext, {"text": "."})
+    OLEDthread.set_delay(3, 0.5)
 
-    OLEDthread.change_screen(4, OLEDtext)
-    OLEDthread.update_delay(4, 0.5)
+    OLEDthread.change_screen(4, OLEDtext, {"text": "."})
+    OLEDthread.set_delay(4, 0.5)
 
 
 def setup_threads(num, starting_port, address):
@@ -76,7 +76,6 @@ if __name__ == "__main__":
     multiplexer_address = 0x70
     num_screens = 6
     setup_threads(num_screens, 2, multiplexer_address)
-    setup_oleds()
     initialise_database(num_screens)
 
     stop_event = threading.Event()
@@ -94,6 +93,6 @@ if __name__ == "__main__":
 
         # Set delay and start looping
         for screen_number in range(1, num_screens+1):
-            OLEDthread.update_delay(screen_number, 1)
+            OLEDthread.set_delay(screen_number, 1)
 
 

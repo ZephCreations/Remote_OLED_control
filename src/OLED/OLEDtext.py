@@ -8,10 +8,10 @@ from textwrap import wrap
 
 class OLEDtext(OLED):
 
-    def __init__(self, device, text="", display_console=False):
-        OLED.__init__(self, device)
-        self.text = self.wrap_text(text)
-        self.display_console = display_console
+    def __init__(self, device, data: dict):
+        OLED.__init__(self, device, data)
+        self.text = self.wrap_text(self.data.get("text"))
+        self.display_console = self.data.get("console") or False
 
 
     def update(self):
