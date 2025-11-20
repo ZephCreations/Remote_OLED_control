@@ -13,7 +13,7 @@
 
 	<div class="label">
 		<h1>Screens</h1>
-		<form method="post" id="profile_form" class="profile-form">
+		<form action="" method="post" id="profile_form" class="profile-form">
 			<input type="hidden" name="profile_action" value="switch">
 			<select name="profile" id="profile_select">
 				{% for profile in profiles %}
@@ -47,6 +47,20 @@
 
 			<!-- Send currently selected profile -->
 			<input type="hidden" name="profile_id" value="{{ current_profile.id }}">
+			<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
+		</form>
+		<form action="" method="post" id="screen_form" style="display:flex; gap:1-px;">
+			<input type="hidden" name="screen_action" value="switch">
+			<label class="item" for="screen_select">
+				Screen to update:
+				<select name="screen" id="screen_select">
+					{% for display in displays %}
+						<option value="{{ display.screen_id }}"
+							{% if display.screen_id == current_screen.id %}selected{% endif %}
+						>Screen {{ forloop.counter }}</option>
+					{% endfor %}
+				</select>
+			</label>
 		</form>
 	</div>
 	<br>
@@ -55,16 +69,17 @@
 			<h2>Text</h2>
 			<form action="" method="post">
 				<input type="hidden" name="profile" value="{{ current_profile_id }}">
+				<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
 				<input type="hidden" name="type" value="Text">
 				<label for="text_input">Enter the text to display here:</label>
 				<textarea id="text_input" name="text_input"
 						  placeholder="Example text" rows="4" cols="20">{{ displays[0].data.text }}</textarea>
-				<label for="text-screen">Pick the screen to display on here:</label>
-				<select id="text-screen" name="screen">
-					{% for display in displays %}
-					<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>
-					{% endfor %}
-				</select>
+<!--				<label for="text-screen">Pick the screen to display on here:</label>-->
+<!--				<select id="text-screen" name="screen">-->
+<!--					{% for display in displays %}-->
+<!--					<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>-->
+<!--					{% endfor %}-->
+<!--				</select>-->
 				<button type="button" class="btn collapsible">More Options</button>
 				<div class="collapsible-content">
 					<input type="checkbox" id="display_console" name="display_console" value="True">
@@ -77,13 +92,14 @@
 			<h2>Timer</h2>
 			<form action="" method="post">
 				<input type="hidden" name="profile" value="{{ current_profile_id }}">
+				<input type="hidden" name="screen_id" value="{{ current_screen.id }}">
 				<input type="hidden" name="type" value="Timer">
-					<label for="timer-screen">Pick the screen to display on here:</label>
-					<select id="timer-screen" name="screen">
-						{% for display in displays %}
-						<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>
-						{% endfor %}
-					</select>
+<!--					<label for="timer-screen">Pick the screen to display on here:</label>-->
+<!--					<select id="timer-screen" name="screen">-->
+<!--						{% for display in displays %}-->
+<!--						<option value="{{ display.screen_id }}">Screen {{ forloop.counter }}</option>-->
+<!--						{% endfor %}-->
+<!--					</select>-->
 					<button class="btn inline" name="timer_val" value="start">Start Timer</button>
 					<button class="btn inline" name="timer_val" value="pause">Pause/Play Timer</button>
 					<button class="btn inline" name="timer_val" value="reset">Reset Timer</button>

@@ -16,3 +16,7 @@ for (i = 0; i < coll.length; i++) {
 document.getElementById("profile_select").addEventListener("change", () => {
     document.getElementById("profile_form").submit();
 });
+
+document.getElementById("screen_select").addEventListener("change", () => {
+    document.getElementById("screen_form").submit();
+});

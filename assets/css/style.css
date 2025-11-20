@@ -85,7 +85,7 @@ nav h1 {
 	padding-left: 5px;
 }
 
-.item textarea, .item select {
+.item textarea, .item select, .item input {
     display: block;
     margin: 10px 0px;
     padding: 5px;
