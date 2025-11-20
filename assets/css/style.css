@@ -80,10 +80,11 @@ nav h1 {
     background: black;
     color: whitesmoke;
     text-align: left;
-    width: 128px;
-    height: 64px;
-    padding: 0px;
+    width: 20ch; /* 20 character */ /*128px*/
+    height: 4rem; /*64px*/
+    padding: 2px;
     margin: auto;
+    font-size: 12px;
 }
 
 .flex-form {
