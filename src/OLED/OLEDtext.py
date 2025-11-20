@@ -11,7 +11,7 @@ class OLEDtext(OLED):
     def __init__(self, device, data: dict):
         OLED.__init__(self, device, data)
         self.text = self.wrap_text(self.data.get("text"))
-        self.display_console = self.data.get("console") or False
+        self.display_console = self.data.get("console")
 
 
     def update(self):
