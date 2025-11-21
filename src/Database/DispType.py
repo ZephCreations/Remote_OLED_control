@@ -7,6 +7,7 @@ class DispTypeList(Enum):
     TIMER = 2
     IMAGE = 3
     SELECTION = 4
+    CHECKLIST = 5
 
 
 class DispType:

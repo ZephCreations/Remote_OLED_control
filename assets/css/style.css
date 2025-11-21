@@ -171,6 +171,25 @@ nav h1 {
 	background-color: cadetblue;
 }
 
+.checklist-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checklist-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.checklist-row input[type="text"] {
+    flex: 1;
+    padding: 5px;
+    min-width: 100px;
+    margin: 0;
+}
+
 .collapsible {
     cursor: pointer;
     width: 100%;

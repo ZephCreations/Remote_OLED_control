@@ -89,6 +89,20 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             disp_type.id = current_display.type_id
             disp_type = self.type_dao.get_type(disp_type)
 
+            # Get checklist (if relavent)
+            items = []
+            if disp_type.name == "CHECKLIST":
+                # Pad or slice existing list to exactly 4
+                raw_items = current_display.data.get("items", [])
+                for i in range(4):
+                    if i < len(raw_items):
+                        items.append(raw_items[i])
+                    else:
+                        items.append(("", False))
+            else:
+                # Default blank list
+                items = [("", False) for _ in range(4)]
+
             # Load and render the template dynamically
             context = {
                 "profiles": profiles,
@@ -97,6 +111,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 "current_display": current_display,
                 "current_screen": current_screen,
                 "current_type": disp_type.name,
+                "checklist_items": items,
             }
             tpl = loader.load("pages/main.html")
             html = tpl.render(context)
@@ -226,6 +241,9 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             return
         elif post_type == "Text":
             self.handle_text_form()
+            return
+        elif post_type == "Checklist":
+            self.handle_checklist_form()
             return
 
     def handle_profile_form(self):
@@ -378,6 +396,37 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.display_dao.update_display(display)
         else:
             self.display_dao.add_display(display)
+
+    def handle_checklist_form(self):
+        screen_id = int(self.form_data.get('screen_id', 0))
+        profile_id = self.get_current_profile().id
+        type_id = self.type_dao.get_type_by_value(DispTypeList.CHECKLIST.name).id
+        items = []
+
+        # Get items from form
+        for i in range(4):
+            text = self.form_data.get(f"item_text_{i}", "").strip()
+            checked = self.form_data.get(f"item_check_{i}") is not None
+            items.append((text, checked))
+
+        # Update database
+        content = {
+            "items": items,
+            "text": "<br>".join(
+                    f"{'[x]' if checked else '[ ]'} {text}"
+                    for text, checked in items
+                ),
+        }
+        print(content)
+        display = Display(profile_id, screen_id, type_id, content)
+        existing = self.display_dao.get_display_by_value(profile_id, screen_id)
+        if existing is not None:
+            self.display_dao.update_display(display)
+        else:
+            self.display_dao.add_display(display)
+
+        # Update OLEDs
+        self.update_single(display)
 
     # -----------------------------------------------------------
     # OLED functions
