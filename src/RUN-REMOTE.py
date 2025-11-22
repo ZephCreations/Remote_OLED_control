@@ -1,7 +1,7 @@
 import subprocess
 
 user = "zoot"
-host = "192.168.0.33"
+host = "192.168.1.33"
 password = "password"
 
 

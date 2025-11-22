@@ -6,7 +6,7 @@ from urllib.parse import urlparse, parse_qsl
 from pathlib import Path
 
 from utils import get_project_root
-from OLED import OLEDthread, OLEDtext, OLEDtimer
+from OLED import OLEDthread, OLEDtext, OLEDtimer, OLEDchecklist
 from template import TemplateLoader
 from Database import *
 
@@ -448,6 +448,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             oled_class = None
         elif disp_type.name == DispTypeList.SELECTION.name:
             oled_class = None
+        elif disp_type.name == DispTypeList.CHECKLIST.name:
+            oled_class = OLEDchecklist
 
         # Update screens
         OLEDthread.change_type(display.screen_id, oled_class, display.data)

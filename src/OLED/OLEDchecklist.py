@@ -2,10 +2,8 @@ from OLED import OLED
 
 from luma.core.render import canvas
 
-from textwrap import wrap
 
-
-class OLEDtext(OLED):
+class OLEDchecklist(OLED):
 
     def __init__(self, device, data: dict):
         OLED.__init__(self, device, data)
@@ -30,7 +28,7 @@ class OLEDtext(OLED):
     @staticmethod
     def join_text(items):
         return "\n".join(
-            f"{'[x]' if checked else '[]'} {text}"
-            for text, checked in items
-        ),
+                    f"{'[x]' if checked else '[ ]'} {text}"
+                    for text, checked in items
+                )
 
