@@ -27,3 +27,28 @@ done
 deactivate
 
 exit
+
+# Additional commands for auto-running
+# sudo nano /etc/systemd/system/oled.service
+
+#  SCRIPT:
+#    [Unit]
+#    Description=OLED Startup Script
+#    After=network-online.target
+#
+#    [Service]
+#    Type=simple
+#    User=zoot
+#    WorkingDirectory=/home/zoot/Project/OLED
+#    ExecStart=/home/zoot/Project/OLED/startup.sh
+#    Restart=always
+#
+#    [Install]
+#    WantedBy=multi-user.target
+
+# Make sure script has permissions after editing:
+# chmod +x /home/zoot/Project/OLED/startup.sh
+# sudo systemctl daemon-reload
+# sudo systemctl start/restart oled.service
+# sudo systemctl status oled.service
+
