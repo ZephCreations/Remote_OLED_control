@@ -26,7 +26,13 @@ if __name__ == "__main__":
     sshProcess = create_cmd()
     run_cmd(sshProcess, "cd Project/OLED")
     # Update Project from git
-    run_cmd(sshProcess, "git pull https://github.com/ZephCreations/Remote_OLED_control master")
+    # link command for reference:
+    #   git init
+    #   git remote add origin https://github.com/ZephCreations/Remote_OLED_control.git
+
+    run_cmd(sshProcess, "git fetch origin")
+    run_cmd(sshProcess, "git reset --hard origin/master")
+    run_cmd(sshProcess, "git pull origin master")
 
     # Activate venv
     run_cmd(sshProcess, "source venv/bin/activate")

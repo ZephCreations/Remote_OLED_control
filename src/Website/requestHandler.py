@@ -180,11 +180,12 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         # Get active profile
         profile_id = WebRequestHandler.active_profile_id
 
-        # If no active profile, use default
+        # If no active profile, use first
         if profile_id is None:
             print("No active profile")
-            WebRequestHandler.active_profile_id = self.default_profile.id
-            return self.default_profile
+            profile = self.profile_dao.get_all()[0]
+            WebRequestHandler.active_profile_id = profile.id
+            return profile
 
         # Get from db
         profile = Profile("temp")
