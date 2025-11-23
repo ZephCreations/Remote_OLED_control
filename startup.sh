@@ -1,3 +1,9 @@
+#!/bin/bash
+
+# Set executable and change directory
+set -e
+cd /home/zoot/Project/OLED
+
 # Update Project from git
 #   Initialisation commands for reference:
 #   git init
