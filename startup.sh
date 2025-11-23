@@ -40,6 +40,7 @@ exit
 #    Type=simple
 #    User=zoot
 #    WorkingDirectory=/home/zoot/Project/OLED
+#    ExecStartPre=/bin/chmod +x /home/zoot/Project/OLED/startup.sh
 #    ExecStart=/home/zoot/Project/OLED/startup.sh
 #    Restart=always
 #
